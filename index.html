@@ -127,67 +127,81 @@
     .harvest-summary p { margin: 5px 0; font-weight: 500; }
     .harvest-summary span { font-weight: 600; color: var(--color-primary-dark); }
     
-    .talhao-selection-list { 
-        max-height: 350px; 
-        overflow-y: auto; 
-        border: 1px solid var(--color-border); 
-        border-radius: var(--border-radius); 
-        padding: 10px; 
-        margin-top: 10px; 
-        display: grid; 
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-        gap: 15px;
-        background-color: #fdfdfd;
+    /* --- NEW/FINAL TALHAO SELECTION STYLES --- */
+    .talhao-selection-list {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius);
+        padding: 10px;
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 10px;
+        background-color: #f8fafc;
     }
-    .talhao-selection-item { 
-        display: flex; 
-        align-items: flex-start; 
-        gap: 12px; 
-        padding: 12px; 
-        border-radius: var(--border-radius); 
-        background-color: #f8f9fa; 
-        border: 1px solid var(--color-border); 
+
+    .talhao-selection-item {
+        display: grid;
+        grid-template-columns: auto 1fr; /* Coluna para o checkbox e outra para o conteúdo */
+        grid-template-rows: auto 1fr;    /* Linha para o nome e outra para os detalhes */
+        grid-template-areas:
+            "check name"
+            "check details";
+        gap: 4px 12px; /* Espaçamento entre linhas e colunas */
+        padding: 12px;
+        border-radius: var(--border-radius);
+        background-color: var(--color-white);
+        border: 1px solid var(--color-border);
         box-shadow: var(--shadow-sm);
-        transition: var(--transition); 
-    }
-    .talhao-selection-item:hover { 
-        border-color: var(--color-primary); 
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
-    .talhao-selection-item input[type="checkbox"] { 
-        margin-top: 5px; 
-        flex-shrink: 0; 
-        transform: scale(1.2);
-    }
-    .talhao-info { 
-        display: flex; 
-        flex-direction: column; 
-        flex-grow: 1;
+        transition: var(--transition);
         cursor: pointer;
     }
-    .talhao-info strong { 
-        color: var(--color-primary-dark); 
-        font-weight: 600;
-        margin-bottom: 8px;
+
+    .talhao-selection-item:hover {
+        border-color: var(--color-primary);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
     }
-    .talhao-info .details {
+
+    .talhao-selection-item input[type="checkbox"] {
+        grid-area: check;
+        align-self: start;
+        margin-top: 4px;
+        transform: scale(1.2);
+        pointer-events: none; /* Deixa o label controlar o clique */
+    }
+
+    .talhao-name {
+        grid-area: name;
+        font-weight: 600;
+        color: var(--color-primary-dark);
+        line-height: 1.3;
+        word-break: break-word; /* Força a quebra de palavras longas */
+    }
+
+    .talhao-details {
+        grid-area: details;
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 5px;
         font-size: 13px;
+        color: var(--color-text-light);
     }
-    .talhao-info .details span {
+
+    .talhao-details span {
         display: flex;
         align-items: center;
         gap: 8px;
-        color: var(--color-text-light);
     }
-    .talhao-info .details i {
-        color: var(--color-accent);
+
+    .talhao-details i {
         width: 14px;
         text-align: center;
+        color: var(--color-accent);
+        flex-shrink: 0;
     }
+    /* --- END OF NEW/FINAL TALHAO SELECTION STYLES --- */
 
     #harvest-plans-list .plano-card { border-left-color: var(--color-success); }
     .editable-atr { cursor: pointer; background-color: #eef7ee; padding: 2px 6px; border-radius: 6px; font-weight: 500;}
@@ -1003,39 +1017,47 @@
                 talhaoList.appendChild(table);
             },
             renderHarvestTalhaoSelection(farmCode, plotIdsToCheck = []) {
-                const { talhaoSelectionList } = App.elements.harvest;
+                const { talhaoSelectionList, editingGroupId } = App.elements.harvest;
                 talhaoSelectionList.innerHTML = '';
-                
+
                 if (!App.state.activeHarvestPlan) return;
-                
+
                 const farm = App.state.fazendas.find(f => f.code === farmCode);
                 if (!farm || !farm.talhoes || farm.talhoes.length === 0) {
-                    talhaoSelectionList.innerHTML = '<p>Nenhum talhão disponível nesta fazenda.</p>';
+                    talhaoSelectionList.innerHTML = '<p style="grid-column: 1 / -1; text-align: center;">Nenhum talhão cadastrado nesta fazenda.</p>';
                     return;
                 }
 
-                const alreadyInSequence = App.state.activeHarvestPlan.sequence.some(group => group.fazendaCodigo === farmCode && group.id != App.elements.harvest.editingGroupId.value);
-                if (alreadyInSequence) {
-                    talhaoSelectionList.innerHTML = '<p>Esta fazenda já foi adicionada à sequência.</p>';
-                    return;
+                // Get all plot IDs that are already in a sequence, excluding the one we are currently editing
+                const allAssignedTalhaoIds = App.actions.getAssignedTalhaoIds(editingGroupId.value);
+                
+                // Filter the farm's plots to get only the available ones
+                const availableTalhoes = farm.talhoes.filter(t => !allAssignedTalhaoIds.includes(t.id));
+
+                if (availableTalhoes.length === 0) {
+                     talhaoSelectionList.innerHTML = '<p style="grid-column: 1 / -1; text-align: center;">Todos os talhões desta fazenda já foram alocados em um plano.</p>';
+                     return;
                 }
                 
-                farm.talhoes.sort((a,b) => a.name.localeCompare(b.name)).forEach(talhao => {
-                    const div = document.createElement('div');
-                    div.className = 'talhao-selection-item';
+                availableTalhoes.sort((a,b) => a.name.localeCompare(b.name)).forEach(talhao => {
                     const isChecked = plotIdsToCheck.includes(talhao.id);
-                    div.innerHTML = `
+                    
+                    const label = document.createElement('label');
+                    label.className = 'talhao-selection-item';
+                    label.htmlFor = `talhao-select-${talhao.id}`;
+
+                    label.innerHTML = `
                         <input type="checkbox" id="talhao-select-${talhao.id}" data-talhao-id="${talhao.id}" ${isChecked ? 'checked' : ''}>
-                        <label for="talhao-select-${talhao.id}" class="talhao-info">
-                            <strong>${talhao.name}</strong>
-                            <div class="details">
+                        <div class="talhao-info">
+                            <strong class="talhao-name">${talhao.name}</strong>
+                            <div class="talhao-details">
                                 <span><i class="fas fa-ruler-combined"></i>Área: ${talhao.area || 0} ha</span>
                                 <span><i class="fas fa-weight-hanging"></i>Produção: ${talhao.producao || 0} ton</span>
                                 <span><i class="fas fa-seedling"></i>Variedade: ${talhao.variedade || 'N/A'}</span>
                             </div>
-                        </label>
+                        </div>
                     `;
-                    talhaoSelectionList.appendChild(div);
+                    talhaoSelectionList.appendChild(label);
                 });
             },
             updatePermissionsForRole(role) {
@@ -1275,6 +1297,38 @@
         },
 
         actions: {
+            getAssignedTalhaoIds(editingGroupId = null) {
+                const assignedIds = new Set();
+                const currentPlanId = App.state.activeHarvestPlan ? App.state.activeHarvestPlan.id : null;
+
+                App.state.harvestPlans.forEach(plan => {
+                    // Only check other plans if we are editing an existing plan
+                    if (currentPlanId && plan.id === currentPlanId) {
+                        // This is the current plan, only add plots from groups NOT being edited
+                         plan.sequence.forEach(group => {
+                            if (editingGroupId && group.id == editingGroupId) {
+                                return;
+                            }
+                            group.plots.forEach(plot => assignedIds.add(plot.talhaoId));
+                        });
+                    } else {
+                        // This is a different plan, add all its plots
+                        plan.sequence.forEach(group => {
+                            group.plots.forEach(plot => assignedIds.add(plot.talhaoId));
+                        });
+                    }
+                });
+                 // Also check the current unsaved plan's sequence
+                if (App.state.activeHarvestPlan) {
+                    App.state.activeHarvestPlan.sequence.forEach(group => {
+                        if (editingGroupId && group.id == editingGroupId) {
+                            return;
+                        }
+                        group.plots.forEach(plot => assignedIds.add(plot.talhaoId));
+                    });
+                }
+                return Array.from(assignedIds);
+            },
             saveFarm() {
                 const { farmCode, farmName } = App.elements.cadastros;
                 const code = farmCode.value.trim();
