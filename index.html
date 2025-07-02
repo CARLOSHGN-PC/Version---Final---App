@@ -636,6 +636,15 @@
                 <div class="form-col"><label for="inicioBrocamento" class="required">Data Início:</label><input type="date" id="inicioBrocamento" /></div>
                 <div class="form-col"><label for="fimBrocamento" class="required">Data Fim:</label><input type="date" id="fimBrocamento" /></div>
             </div>
+             <div class="form-row">
+                <div class="form-col">
+                    <label for="tipoRelatorioBroca">Tipo de Relatório:</label>
+                    <select id="tipoRelatorioBroca">
+                        <option value="A">Modelo A - Geral</option>
+                        <option value="B">Modelo B - Por Fazenda</option>
+                    </select>
+                </div>
+            </div>
             <div class="botoes-relatorio">
                 <button id="btnPDFBrocamento" type="button"><i class="fas fa-file-pdf"></i> Gerar Relatório (PDF)</button>
                 <button id="btnExcelBrocamento" type="button"><i class="fas fa-file-excel"></i> Exportar para Excel</button>
@@ -998,7 +1007,9 @@
                 topo: document.getElementById('brocaTopo'),
                 brocado: document.getElementById('brocado'),
                 resultado: document.getElementById('resultado'), btnSalvar: document.getElementById('btnSalvarBrocamento'),
-                filtroFazenda: document.getElementById('fazendaFiltroBrocamento'), filtroInicio: document.getElementById('inicioBrocamento'),
+                filtroFazenda: document.getElementById('fazendaFiltroBrocamento'), 
+                tipoRelatorio: document.getElementById('tipoRelatorioBroca'),
+                filtroInicio: document.getElementById('inicioBrocamento'),
                 filtroFim: document.getElementById('fimBrocamento'), btnPDF: document.getElementById('btnPDFBrocamento'),
                 btnExcel: document.getElementById('btnExcelBrocamento'),
             },
@@ -1369,7 +1380,7 @@
                         </td>
                     `;
                 });
-                talhaoList.appendChild(table);
+                list.appendChild(table);
             },
             renderHarvestTalhaoSelection(farmCode, plotIdsToCheck = []) {
                 const { talhaoSelectionList, editingGroupId } = App.elements.harvest;
@@ -2179,9 +2190,13 @@
                 const { broca } = App.elements;
                 if (!App.ui.validateFields(['codigo', 'data', 'talhao', 'entrenos', 'brocaBase', 'brocaMeio', 'brocaTopo'])) { App.ui.showAlert("Preencha todos os campos obrigatórios!", "error"); return; }
                 const farm = App.state.fazendas.find(f => f.code === broca.codigo.value.trim());
+                if (!farm) { App.ui.showAlert("Fazenda não encontrada.", "error"); return; }
+                const talhao = farm.talhoes.find(t => t.name.toUpperCase() === broca.talhao.value.trim().toUpperCase());
+
                 const newEntry = {
-                    codigo: broca.codigo.value.trim(), fazenda: farm ? farm.name : 'Desconhecida', data: broca.data.value,
+                    codigo: broca.codigo.value.trim(), fazenda: farm.name, data: broca.data.value,
                     talhao: broca.talhao.value.trim(), 
+                    corte: talhao ? talhao.corte : null,
                     entrenos: parseInt(broca.entrenos.value), 
                     base: parseInt(broca.base.value),
                     meio: parseInt(broca.meio.value),
@@ -2423,7 +2438,7 @@
                 const doc = new jsPDF({ orientation: 'landscape', ...options }); 
                 doc.setFontSize(18); 
                 doc.text(title, doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
-                doc.autoTable({ head: headers, body: bodyData, startY: 25, headStyles: { fillColor: [46, 125, 50] } });
+                doc.autoTable({ head: headers, body: bodyData, startY: 25, headStyles: { fillColor: [46, 125, 50] }, ...options.autoTableOptions });
                 doc.save(`${title.toLowerCase().replace(/\s/g, '_')}.pdf`); 
                 App.ui.showAlert('Relatório PDF gerado com sucesso!');
             },
@@ -2439,59 +2454,156 @@
                 document.body.removeChild(link);
                 App.ui.showAlert('Relatório Excel (CSV) gerado com sucesso!');
             },
-            generateBrocamentoPDF(dataToExport = null, title = 'Relatorio_Brocamento') {
-                const { filtroInicio, filtroFim } = App.elements.broca;
+            generateBrocamentoPDF() {
+                const { filtroInicio, filtroFim, tipoRelatorio } = App.elements.broca;
                 if (!filtroInicio.value || !filtroFim.value) {
                     App.ui.showAlert("Por favor, selecione a Data Início e a Data Fim para gerar o relatório.", "warning");
                     return;
                 }
-                const data = dataToExport || this._getFilteredData(App.state.registros, App.elements.broca);
-                const headers = [['Fazenda', 'Talhão', 'Data', 'Entrenós', 'Brocado', 'Brocamento (%)']];
-                const body = data.map(r => [`${r.codigo} - ${r.fazenda}`, r.talhao, r.data, r.entrenos, r.brocado, r.brocamento]);
-                this._generatePDF(title, headers, body);
-            },
-            generateBrocamentoCSV(dataToExport = null, title = 'relatorio_brocamento.csv') {
-                const { filtroInicio, filtroFim } = App.elements.broca;
-                if (!filtroInicio.value || !filtroFim.value) {
-                    App.ui.showAlert("Por favor, selecione a Data Início e a Data Fim para gerar o relatório.", "warning");
-                    return;
-                }
-                const data = dataToExport || this._getFilteredData(App.state.registros, App.elements.broca);
-                const headers = ['Fazenda', 'Talhão', 'Data', 'Entrenós', 'Brocado', 'Brocamento (%)'];
-                const body = data.map(r => [`${r.codigo} - ${r.fazenda}`, r.talhao, r.data, r.entrenos, r.brocado, r.brocamento]);
-                this._generateCSV(title, headers, body);
-            },
-            generatePerdaPDF(dataToExport = null, title = null) {
-                const { filtroInicio, filtroFim } = App.elements.perda;
-                if (!filtroInicio.value || !filtroFim.value) {
-                    App.ui.showAlert("Por favor, selecione a Data Início e a Data Fim para gerar o relatório.", "warning");
-                    return;
-                }
-                const data = dataToExport || this._getFilteredData(App.state.perdas, App.elements.perda); 
-                const isDetailed = App.elements.perda.tipoRelatorio.value === 'B';
-                const finalTitle = title || (isDetailed ? 'Relatorio_Perda_Detalhado' : 'Relatorio_Perda_Resumido');
-                const baseHeaders = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Operador', 'Frota'];
-                const detailedHeaders = ['Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média'];
-                const headers = isDetailed ? [baseHeaders.concat(detailedHeaders)] : [baseHeaders.concat(['Total', 'Média'])];
+                const data = this._getFilteredData(App.state.registros, App.elements.broca);
+                const headers = [['Data', 'Talhão', 'Corte', 'Entrenós', 'Brocado', 'Brocamento (%)']];
                 
-                const body = data.map(p => {
-                    const fazendaDisplay = `${p.codigo} - ${p.fazenda}`;
-                    const baseData = [fazendaDisplay, p.talhao, p.data, p.frenteServico, p.turno, p.operador, p.frota];
-                    const detailedData = [p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media];
-                    return isDetailed ? baseData.concat(detailedData) : baseData.concat([p.total, p.media]);
-                });
-                this._generatePDF(finalTitle, headers, body);
+                if (tipoRelatorio.value === 'A') { // Modelo Geral
+                    const body = data.map(r => [r.data, r.talhao, r.corte, r.entrenos, r.brocado, r.brocamento]);
+                    this._generatePDF('Relatório Geral de Brocamento', headers, body);
+                } else { // Modelo B - Por Fazenda
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF({ orientation: 'landscape' });
+                    doc.setFontSize(18);
+                    doc.text('Relatório de Brocamento por Fazenda', doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
+                    let finalY = 25;
+                    
+                    const groupedData = data.reduce((acc, reg) => {
+                        const key = `${reg.codigo} - ${reg.fazenda}`;
+                        if (!acc[key]) acc[key] = [];
+                        acc[key].push(reg);
+                        return acc;
+                    }, {});
+
+                    let grandTotalEntrenos = 0;
+                    let grandTotalBrocado = 0;
+
+                    Object.keys(groupedData).sort((a,b) => parseInt(a) - parseInt(b)).forEach(fazendaKey => {
+                        const farmData = groupedData[fazendaKey];
+                        const body = farmData.map(r => [r.data, r.talhao, r.corte, r.entrenos, r.brocado, r.brocamento]);
+                        
+                        let subTotalEntrenos = farmData.reduce((sum, r) => sum + r.entrenos, 0);
+                        let subTotalBrocado = farmData.reduce((sum, r) => sum + r.brocado, 0);
+                        grandTotalEntrenos += subTotalEntrenos;
+                        grandTotalBrocado += subTotalBrocado;
+
+                        doc.setFontSize(12);
+                        doc.text(fazendaKey, 14, finalY);
+                        
+                        doc.autoTable({
+                            head: headers,
+                            body: body,
+                            startY: finalY + 2,
+                            headStyles: { fillColor: [46, 125, 50] },
+                            foot: [['Subtotal', '', '', subTotalEntrenos, subTotalBrocado, '']],
+                            footStyles: { fillColor: [230, 230, 230], textColor: 0, fontStyle: 'bold' },
+                            didDrawPage: (data) => { finalY = data.cursor.y + 15; }
+                        });
+                        finalY = doc.lastAutoTable.finalY + 15;
+                    });
+
+                    doc.setFontSize(12);
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`Total Geral: Entrenós: ${grandTotalEntrenos} | Brocado: ${grandTotalBrocado}`, 14, finalY);
+
+                    doc.save('relatorio_brocamento_por_fazenda.pdf');
+                    App.ui.showAlert('Relatório PDF gerado com sucesso!');
+                }
             },
-            generatePerdaCSV(dataToExport = null, title = 'relatorio_perda.csv') {
+            generateBrocamentoCSV() {
+                 const { filtroInicio, filtroFim, tipoRelatorio } = App.elements.broca;
+                if (!filtroInicio.value || !filtroFim.value) {
+                    App.ui.showAlert("Por favor, selecione a Data Início e a Data Fim para gerar o relatório.", "warning");
+                    return;
+                }
+                const data = this._getFilteredData(App.state.registros, App.elements.broca);
+                const headers = ['Fazenda', 'Data', 'Talhão', 'Corte', 'Entrenós', 'Brocado', 'Brocamento (%)'];
+                let body = [];
+
+                if (tipoRelatorio.value === 'A') {
+                    body = data.map(r => [`${r.codigo} - ${r.fazenda}`, r.data, r.talhao, r.corte, r.entrenos, r.brocado, r.brocamento]);
+                    this._generateCSV('relatorio_geral_brocamento.csv', headers, body);
+                } else {
+                     const groupedData = data.reduce((acc, reg) => {
+                        const key = `${reg.codigo} - ${reg.fazenda}`;
+                        if (!acc[key]) acc[key] = [];
+                        acc[key].push(reg);
+                        return acc;
+                    }, {});
+
+                    let grandTotalEntrenos = 0;
+                    let grandTotalBrocado = 0;
+
+                    Object.keys(groupedData).sort((a,b) => parseInt(a) - parseInt(b)).forEach(fazendaKey => {
+                        const farmData = groupedData[fazendaKey];
+                        farmData.forEach(r => {
+                            body.push([fazendaKey, r.data, r.talhao, r.corte, r.entrenos, r.brocado, r.brocamento]);
+                        });
+                        let subTotalEntrenos = farmData.reduce((sum, r) => sum + r.entrenos, 0);
+                        let subTotalBrocado = farmData.reduce((sum, r) => sum + r.brocado, 0);
+                        grandTotalEntrenos += subTotalEntrenos;
+                        grandTotalBrocado += subTotalBrocado;
+                        body.push(['Subtotal', '', '', '', subTotalEntrenos, subTotalBrocado, '']);
+                    });
+                    body.push([]); // Empty line
+                    body.push(['Total Geral', '', '', '', grandTotalEntrenos, grandTotalBrocado, '']);
+                    this._generateCSV('relatorio_brocamento_por_fazenda.csv', headers, body);
+                }
+            },
+            generatePerdaPDF() {
                 const { filtroInicio, filtroFim } = App.elements.perda;
                 if (!filtroInicio.value || !filtroFim.value) {
                     App.ui.showAlert("Por favor, selecione a Data Início e a Data Fim para gerar o relatório.", "warning");
                     return;
                 }
-                const data = dataToExport || this._getFilteredData(App.state.perdas, App.elements.perda);
-                const headers = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Operador', 'Frota', 'Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média'];
-                const body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.operador, p.frota, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media]);
-                this._generateCSV(title, headers, body);
+                const data = this._getFilteredData(App.state.perdas, App.elements.perda); 
+                const isDetailed = App.elements.perda.tipoRelatorio.value === 'B';
+                const finalTitle = isDetailed ? 'Relatorio_Perda_Detalhado' : 'Relatorio_Perda_Resumido';
+                
+                let headers, body, autoTableOptions = {};
+
+                if (isDetailed) {
+                    headers = [['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Operador', 'Frota', 'C.Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total']];
+                    body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.operador, p.frota, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total]);
+                } else {
+                    headers = [['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Matrícula', 'Frota', 'Total']];
+                    body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.matricula, p.frota, p.total]);
+                    const grandTotal = data.reduce((sum, p) => sum + p.total, 0);
+                    autoTableOptions = {
+                        foot: [['Total Geral', '', '', '', '', '', '', grandTotal.toFixed(2)]],
+                        footStyles: { fillColor: [230, 230, 230], textColor: 0, fontStyle: 'bold' },
+                    }
+                }
+                this._generatePDF(finalTitle, headers, body, { autoTableOptions });
+            },
+            generatePerdaCSV() {
+                const { filtroInicio, filtroFim } = App.elements.perda;
+                if (!filtroInicio.value || !filtroFim.value) {
+                    App.ui.showAlert("Por favor, selecione a Data Início e a Data Fim para gerar o relatório.", "warning");
+                    return;
+                }
+                const data = this._getFilteredData(App.state.perdas, App.elements.perda);
+                const isDetailed = App.elements.perda.tipoRelatorio.value === 'B';
+                
+                let headers, body;
+
+                if(isDetailed) {
+                    headers = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Operador', 'Frota', 'Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média'];
+                    body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.operador, p.frota, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media]);
+                } else {
+                    headers = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Matrícula', 'Frota', 'Total'];
+                    body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.matricula, p.frota, p.total]);
+                    const grandTotal = data.reduce((sum, p) => sum + p.total, 0);
+                    body.push([]);
+                    body.push(['', '', '', '', '', '', 'Total Geral', grandTotal.toFixed(2)]);
+                }
+                
+                this._generateCSV('relatorio_perda.csv', headers, body);
             },
             generateHarvestPlanPDF(planId = null) {
                 const { jsPDF } = window.jspdf;
@@ -2552,7 +2664,7 @@
                         head: head, body: body, startY: finalY,
                         headStyles: { fillColor: [46, 125, 50] }, styles: { fontSize: 8 },
                         columnStyles: { 2: { cellWidth: 50 } },
-                        didDrawPage: (data) => { finalY = data.cursor.y; }
+                        didDrawPage: (data) => { finalY = data.cursor.y + 15; }
                     });
                     finalY = doc.lastAutoTable.finalY + 5;
                     
