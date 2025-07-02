@@ -90,7 +90,7 @@
     .btn-ai { background: linear-gradient(to right, var(--color-ai), #9c27b0); }
     .btn-excluir { padding: 8px 12px; margin-left: 10px; border-radius: var(--border-radius); border: none; background-color: var(--color-danger); color: var(--color-white); cursor: pointer; font-weight: 500; font-size: 14px; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
     .btn-excluir:hover { background-color: #c53030; transform: translateY(-1px); }
-    #alertContainer { position: fixed; top: 20px; right: 20px; background-color: var(--color-success); color: #fff; padding: 16px 24px; border-radius: var(--border-radius); font-weight: 500; font-size: 15px; opacity: 0; pointer-events: none; transition: all 0.4s ease; transform: translateY(-20px); z-index: 1500; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-xl); max-width: 90%; }
+    #alertContainer { position: fixed; top: 20px; right: 20px; background-color: var(--color-success); color: #fff; padding: 16px 24px; border-radius: var(--border-radius); font-weight: 500; font-size: 15px; opacity: 0; pointer-events: none; transition: all 0.4s ease; transform: translateY(-20px); z-index: 2500; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-xl); max-width: 90%; }
     #alertContainer.error { background-color: var(--color-danger); } #alertContainer.warning { background-color: var(--color-warning); } #alertContainer.info { background-color: var(--color-info); }
     #alertContainer.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
     #logoutInfo { position: absolute; top: 15px; right: 20px; background: rgba(255,255,255,0.9); color: var(--color-primary); padding: 8px 16px; border-radius: var(--border-radius); font-weight: 500; user-select: none; display: flex; align-items: center; gap: 10px; font-size: 14px; z-index: 1200; box-shadow: var(--shadow-sm); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
@@ -230,6 +230,64 @@
         flex-shrink: 0;
     }
     
+    /* MODAL STYLES */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 2000;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-content {
+        background: var(--color-white);
+        padding: 30px;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-xl);
+        width: 90%;
+        max-width: 700px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: fadeIn 0.3s ease-out;
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--color-border);
+    }
+    .modal-header h2 { margin: 0; color: var(--color-primary); }
+    .modal-close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--color-text-light);
+        transition: var(--transition);
+    }
+    .modal-close-btn:hover { color: var(--color-danger); transform: rotate(90deg); }
+    .modal-footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--color-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .modal-footer .danger-zone { display: flex; gap: 10px; }
+    .modal-footer button { margin-top: 0; }
+
     @media (max-width: 768px) {
         header h1 { font-size: 18px; max-width: calc(100% - 120px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         #logoutInfo { flex-direction: column; align-items: flex-end; gap: 5px; padding: 6px 10px; }
@@ -453,8 +511,8 @@
             <h2><i class="fas fa-chart-bar"></i> Relatório de Inspeção de Cana (Brocamento)</h2>
             <div class="form-row">
                 <div class="form-col"><label for="fazendaFiltroBrocamento">Filtrar por Fazenda:</label><select id="fazendaFiltroBrocamento"><option value="">Todas</option></select></div>
-                <div class="form-col"><label for="inicioBrocamento">Data Início:</label><input type="date" id="inicioBrocamento" /></div>
-                <div class="form-col"><label for="fimBrocamento">Data Fim:</label><input type="date" id="fimBrocamento" /></div>
+                <div class="form-col"><label for="inicioBrocamento" class="required">Data Início:</label><input type="date" id="inicioBrocamento" /></div>
+                <div class="form-col"><label for="fimBrocamento" class="required">Data Fim:</label><input type="date" id="fimBrocamento" /></div>
             </div>
             <div class="botoes-relatorio">
                 <button id="btnPDFBrocamento" type="button"><i class="fas fa-file-pdf"></i> Gerar Relatório (PDF)</button>
@@ -498,8 +556,8 @@
             </div>
             <div class="form-row">
                 <div class="form-col"><label for="frenteFiltroPerda">Filtrar por Frente de Serviço:</label><input type="text" id="frenteFiltroPerda" placeholder="Digite Frente de Serviço" /></div>
-                <div class="form-col"><label for="inicioPerda">Data Início:</label><input type="date" id="inicioPerda" /></div>
-                <div class="form-col"><label for="fimPerda">Data Fim:</label><input type="date"id="fimPerda" /></div>
+                <div class="form-col"><label for="inicioPerda" class="required">Data Início:</label><input type="date" id="inicioPerda" /></div>
+                <div class="form-col"><label for="fimPerda" class="required">Data Fim:</label><input type="date"id="fimPerda" /></div>
             </div>
             <div class="form-row"><div class="form-col"><label for="tipoRelatorioPerda">Tipo de Relatório:</label><select id="tipoRelatorioPerda"><option value="A">Modelo A - Resumido</option><option value="B">Modelo B - Detalhado</option></select></div></div>
             <div class="botoes-relatorio">
@@ -579,7 +637,7 @@
                     <label class="permission-item"><input type="checkbox" id="permRelatorioPerda" /> <i class="fas fa-chart-pie"></i> Relatório Perda</label>
                     <label class="permission-item"><input type="checkbox" id="permExcluir" /> <i class="fas fa-trash"></i> Excluir Dados</label>
                     <label class="permission-item"><input type="checkbox" id="permGerenciarUsuarios" /> <i class="fas fa-users-cog"></i> Gerir Utilizadores</label>
-                    <label class="permission-item"><input type="checkbox" id="permConfiguracoes" /> <i class="fas fa-cog"></i> Configurações</label>
+                    <label class="permission-item"><input type="checkbox" id="permConfiguracoes" /> <i class="fas fa-cog"></i> Cadastros</label>
                 </div>
             </fieldset>
             <button class="save" id="btnCreateUser" style="max-width: 250px; margin-top: 25px;"><i class="fas fa-user-plus"></i> Criar Utilizador</button>
@@ -591,6 +649,47 @@
 
     <div id="alertContainer" role="alert" aria-live="assertive"></div>
     </div>
+
+    <!-- User Edit Modal -->
+    <div id="userEditModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="userEditModalTitle">Editar Utilizador</h2>
+                <button id="userEditModalCloseBtn" class="modal-close-btn">&times;</button>
+            </div>
+            <input type="hidden" id="editingUserId">
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="editUserUsername">Nome do Utilizador:</label>
+                    <input id="editUserUsername" type="text" disabled style="background: #eee;" />
+                </div>
+                <div class="form-col">
+                    <label for="editUserRole">Perfil:</label>
+                    <select id="editUserRole">
+                        <option value="user">Utilizador</option>
+                        <option value="admin">Administrador</option>
+                        <option value="supervisor">Supervisor</option>
+                        <option value="tecnico">Técnico</option>
+                        <option value="colaborador">Colaborador</option>
+                    </select>
+                </div>
+            </div>
+            <fieldset style="margin-top: 20px; border: 1px solid var(--color-border); border-radius: var(--border-radius); padding: 15px;">
+                <legend>Permissões</legend>
+                <div id="editUserPermissionGrid" class="permission-grid">
+                    <!-- Permissions will be populated by JS -->
+                </div>
+            </fieldset>
+            <div class="modal-footer">
+                <div class="danger-zone">
+                     <button id="btnResetPassword" class="btn-secondary" style="background: var(--color-warning);"><i class="fas fa-key"></i> Redefinir Senha</button>
+                     <button id="btnDeleteUser" class="btn-secondary" style="background: var(--color-danger);"><i class="fas fa-trash"></i> Excluir Utilizador</button>
+                </div>
+                <button id="btnSaveUserChanges" class="save"><i class="fas fa-save"></i> Guardar Alterações</button>
+            </div>
+        </div>
+    </div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -604,6 +703,7 @@
     const App = {
         config: {
             appName: "Inspeção e Planeamento de Cana com IA",
+            sessionKey: 'canaAppUserSession',
             menuConfig: [
                 { label: 'Dashboard', icon: 'fas fa-tachometer-alt', target: 'dashboard', permission: 'dashboard' },
                 { label: 'Plan. Colheita', icon: 'fas fa-tractor', target: 'planejamentoColheita', permission: 'planejamentoColheita' },
@@ -665,8 +765,20 @@
             users: {
                 username: document.getElementById('newUserUsername'), password: document.getElementById('newUserPassword'),
                 role: document.getElementById('newUserRole'), permissionsContainer: document.querySelector('.permission-grid'),
-                permissionCheckboxes: document.querySelectorAll('.permission-grid input[type="checkbox"]'),
+                permissionCheckboxes: document.querySelectorAll('#gerenciarUsuarios .permission-grid input[type="checkbox"]'),
                 btnCreate: document.getElementById('btnCreateUser'), list: document.getElementById('usersList')
+            },
+            userEditModal: {
+                overlay: document.getElementById('userEditModal'),
+                title: document.getElementById('userEditModalTitle'),
+                closeBtn: document.getElementById('userEditModalCloseBtn'),
+                editingUserId: document.getElementById('editingUserId'),
+                username: document.getElementById('editUserUsername'),
+                role: document.getElementById('editUserRole'),
+                permissionGrid: document.getElementById('editUserPermissionGrid'),
+                btnSaveChanges: document.getElementById('btnSaveUserChanges'),
+                btnResetPassword: document.getElementById('btnResetPassword'),
+                btnDeleteUser: document.getElementById('btnDeleteUser'),
             },
             cadastros: {
                 farmCode: document.getElementById('farmCode'),
@@ -750,21 +862,44 @@
             this.data.loadAll();
             this.auth.initializeDefaultUsers();
             this.ui.setupEventListeners();
-            this.elements.loginUser.focus();
+            this.auth.checkSession();
         },
         
         auth: {
             _hashPassword(password) { return CryptoJS.SHA256(password).toString(); },
+            checkSession() {
+                const sessionUser = App.data.load(App.config.sessionKey, null);
+                if (sessionUser) {
+                    const userInDb = App.state.users.find(u => u.id === sessionUser.id);
+                    if (userInDb && userInDb.active) {
+                        App.state.currentUser = userInDb;
+                        App.ui.showAppScreen();
+                    } else {
+                        this.logout(); // User might have been deactivated
+                    }
+                } else {
+                    App.ui.showLoginScreen();
+                }
+            },
             login() {
                 const username = App.elements.loginUser.value.trim();
                 const password = App.elements.loginPass.value;
                 if (!username || !password) { App.ui.showLoginMessage("Preencha utilizador e senha."); return; }
                 const hashedPassword = this._hashPassword(password);
                 const user = App.state.users.find(u => u.username === username && u.password === hashedPassword);
-                if (user && user.active) { App.state.currentUser = user; App.ui.showAppScreen(); }
+                if (user && user.active) { 
+                    App.state.currentUser = user; 
+                    App.data.save(App.config.sessionKey, user); // Save session
+                    App.ui.showAppScreen(); 
+                }
+                else if (user && !user.active) { App.ui.showLoginMessage("Este utilizador está desativado."); }
                 else { App.ui.showLoginMessage("Utilizador ou senha inválidos."); }
             },
-            logout() { App.state.currentUser = null; App.ui.showLoginScreen(); },
+            logout() { 
+                App.state.currentUser = null; 
+                localStorage.removeItem(App.config.sessionKey); // Clear session
+                App.ui.showLoginScreen(); 
+            },
             createUser() {
                 const els = App.elements.users;
                 const username = els.username.value.trim();
@@ -781,23 +916,52 @@
                 els.username.value = ''; els.password.value = ''; els.role.value = 'user';
                 App.ui.updatePermissionsForRole('user');
             },
-            deleteUser(index) {
-                const userToDelete = App.state.users[index];
-                if (confirm(`Tem a certeza que deseja excluir o utilizador ${userToDelete.username}?`)) {
-                    App.state.users.splice(index, 1); App.data.saveUsers(); App.ui.renderUsersList();
+            deleteUser(userId) {
+                const userToDelete = App.state.users.find(u => u.id == userId);
+                if (!userToDelete) return;
+                
+                if (confirm(`Tem a certeza que deseja EXCLUIR PERMANENTEMENTE o utilizador ${userToDelete.username}? Esta ação não pode ser desfeita.`)) {
+                    App.state.users = App.state.users.filter(u => u.id != userId);
+                    App.data.saveUsers(); 
+                    App.ui.renderUsersList();
+                    App.ui.closeUserEditModal();
                     App.ui.showAlert(`Utilizador ${userToDelete.username} excluído.`, 'success');
                 }
             },
-            toggleUserStatus(index) {
-                const user = App.state.users[index]; user.active = !user.active; App.data.saveUsers(); App.ui.renderUsersList();
+            toggleUserStatus(userId) {
+                const user = App.state.users.find(u => u.id == userId); 
+                if (!user) return;
+                user.active = !user.active; 
+                App.data.saveUsers(); 
+                App.ui.renderUsersList();
                 App.ui.showAlert(`Utilizador ${user.username} ${user.active ? 'ativado' : 'desativado'}.`, 'success');
             },
-            resetUserPassword(index) {
-                const user = App.state.users[index]; const newPassword = 'novaSenha123';
+            resetUserPassword(userId) {
+                const user = App.state.users.find(u => u.id == userId);
+                if (!user) return;
+                const newPassword = 'novaSenha123';
                 if (confirm(`Deseja redefinir a senha de ${user.username} para "${newPassword}"?`)) {
                     user.password = this._hashPassword(newPassword); App.data.saveUsers();
                     App.ui.showAlert(`Senha de ${user.username} foi redefinida.`, 'warning');
                 }
+            },
+            saveUserChanges(userId) {
+                const user = App.state.users.find(u => u.id == userId);
+                if (!user) return;
+
+                const modalEls = App.elements.userEditModal;
+                user.role = modalEls.role.value;
+
+                const permissions = {};
+                modalEls.permissionGrid.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    permissions[cb.dataset.permission] = cb.checked;
+                });
+                user.permissions = permissions;
+
+                App.data.saveUsers();
+                App.ui.renderUsersList();
+                App.ui.showAlert(`Alterações para ${user.username} guardadas com sucesso!`);
+                App.ui.closeUserEditModal();
             },
             initializeDefaultUsers() {
                 const debugEl = document.getElementById('debugInfo');
@@ -1060,22 +1224,27 @@
                     talhaoSelectionList.appendChild(label);
                 });
             },
-            updatePermissionsForRole(role) {
+            updatePermissionsForRole(role, containerSelector = '#gerenciarUsuarios .permission-grid') {
                 const permissions = App.config.roles[role] || {};
-                App.elements.users.permissionCheckboxes.forEach(cb => {
-                    const key = cb.id.replace('perm', '').toLowerCase(); cb.checked = !!permissions[key];
+                const container = document.querySelector(containerSelector);
+                container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    const key = cb.id.includes('edit') ? cb.dataset.permission : cb.id.replace('perm', '').toLowerCase();
+                    cb.checked = !!permissions[key];
                 });
             },
-            _createUserCardHTML(user, index) {
+            _createUserCardHTML(user) {
                 const getRoleInfo = (role) => {
                     const roles = { admin: ['Administrador', 'var(--color-primary)'], supervisor: ['Supervisor', 'var(--color-warning)'], tecnico: ['Técnico', 'var(--color-accent)'], colaborador: ['Colaborador', 'var(--color-purple)'], user: ['Utilizador', '#718096'] };
                     return roles[role] || ['Desconhecido', '#718096'];
                 };
                 const [roleName, roleColor] = getRoleInfo(user.role);
-                const buttonsHTML = user.username === App.state.currentUser.username ? '' : `<button class="btn-excluir" data-action="delete" data-index="${index}"><i class="fas fa-trash"></i> Excluir</button><button class="btn-excluir" style="background: var(--color-warning);" data-action="reset" data-index="${index}"><i class="fas fa-key"></i> Redefinir Senha</button><button class="btn-excluir" style="background: ${user.active ? '#718096' : 'var(--color-success)'};" data-action="toggle" data-index="${index}">${user.active ? '<i class="fas fa-ban"></i> Desativar' : '<i class="fas fa-check"></i> Ativar'}</button>`;
-                return `<div class="user-card"><div class="user-header"><div class="user-title">${user.username}<span class="user-role-badge" style="background: ${roleColor};">${roleName}</span></div><div class="user-status ${user.active ? '' : 'inactive'}"><i class="fas fa-circle"></i> ${user.active ? 'Ativo' : 'Inativo'}</div></div><div class="user-actions">${buttonsHTML}</div></div>`;
+                const buttonsHTML = user.username === App.state.currentUser.username ? '' : `
+                    <button class="btn-excluir" style="background: ${user.active ? '#718096' : 'var(--color-success)'};" data-action="toggle" data-id="${user.id}">${user.active ? '<i class="fas fa-ban"></i> Desativar' : '<i class="fas fa-check"></i> Ativar'}</button>
+                    <button class="btn-excluir" style="background: var(--color-info);" data-action="edit" data-id="${user.id}"><i class="fas fa-edit"></i> Editar</button>
+                `;
+                return `<div class="user-card"><div class="user-header"><div class="user-title">${user.username}<span class="user-role-badge" style="background: ${roleColor}; margin-left:10px; padding: 2px 8px; font-size: 12px; color: white; border-radius: 10px;">${roleName}</span></div><div class="user-status ${user.active ? '' : 'inactive'}" style="color: ${user.active ? 'var(--color-success)' : 'var(--color-danger)'}"><i class="fas fa-circle"></i> ${user.active ? 'Ativo' : 'Inativo'}</div></div><div class="user-actions" style="margin-top: 10px; display: flex; gap: 10px; justify-content: flex-end;">${buttonsHTML}</div></div>`;
             },
-            renderUsersList() { const { list } = App.elements.users; list.innerHTML = App.state.users.map((u, i) => this._createUserCardHTML(u, i)).join(''); },
+            renderUsersList() { const { list } = App.elements.users; list.innerHTML = App.state.users.map((u) => this._createUserCardHTML(u)).join(''); },
             renderExclusao() {
                 const { lista } = App.elements.exclusao; lista.innerHTML = ''; let content = '';
                 if (App.state.registros.length > 0) {
@@ -1118,8 +1287,8 @@
                 const { plansList } = App.elements.harvest;
                 plansList.innerHTML = '';
                 if(App.state.harvestPlans.length === 0) {
-                     plansList.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--color-text-light);">Nenhum plano de colheita criado. Clique em "Novo Plano de Colheita" para começar.</p>';
-                     return;
+                    plansList.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--color-text-light);">Nenhum plano de colheita criado. Clique em "Novo Plano de Colheita" para começar.</p>';
+                    return;
                 }
                 App.state.harvestPlans.forEach(plan => {
                     const totalProducao = plan.sequence.reduce((sum, group) => sum + group.totalProducao, 0);
@@ -1212,6 +1381,33 @@
                 const total = fields.reduce((sum, id) => sum + (parseFloat(document.getElementById(id).value) || 0), 0);
                 App.elements.perda.resultado.textContent = `Total Perda: ${total.toFixed(2).replace('.', ',')}`;
             },
+            openUserEditModal(userId) {
+                const modalEls = App.elements.userEditModal;
+                const user = App.state.users.find(u => u.id == userId);
+                if (!user) return;
+
+                modalEls.editingUserId.value = user.id;
+                modalEls.title.textContent = `Editar Utilizador: ${user.username}`;
+                modalEls.username.value = user.username;
+                modalEls.role.value = user.role;
+
+                // Populate permissions
+                modalEls.permissionGrid.innerHTML = ''; // Clear previous
+                const permissionItems = App.config.menuConfig.flatMap(item => item.submenu ? item.submenu : item);
+                permissionItems.forEach(perm => {
+                    if (!perm.permission) return;
+                    const isChecked = user.permissions[perm.permission];
+                    const label = document.createElement('label');
+                    label.className = 'permission-item';
+                    label.innerHTML = `<input type="checkbox" data-permission="${perm.permission}" ${isChecked ? 'checked' : ''}> <i class="${perm.icon}"></i> ${perm.label}`;
+                    modalEls.permissionGrid.appendChild(label);
+                });
+
+                modalEls.overlay.classList.add('show');
+            },
+            closeUserEditModal() {
+                App.elements.userEditModal.overlay.classList.remove('show');
+            },
             setupEventListeners() {
                 App.elements.btnLogin.addEventListener('click', () => App.auth.login());
                 App.elements.loginPass.addEventListener('keypress', e => e.key === 'Enter' && App.auth.login());
@@ -1229,7 +1425,22 @@
                 App.elements.dashboard.btnAnalisar.addEventListener('click', () => App.gemini.getDashboardAnalysis());
                 App.elements.users.role.addEventListener('change', (e) => this.updatePermissionsForRole(e.target.value));
                 App.elements.users.btnCreate.addEventListener('click', () => App.auth.createUser());
-                App.elements.users.list.addEventListener('click', e => { const button = e.target.closest('button[data-action]'); if (!button) return; const { action, index } = button.dataset; if (action === 'delete') App.auth.deleteUser(index); if (action === 'reset') App.auth.resetUserPassword(index); if (action === 'toggle') App.auth.toggleUserStatus(index); });
+                App.elements.users.list.addEventListener('click', e => { 
+                    const button = e.target.closest('button[data-action]'); 
+                    if (!button) return; 
+                    const { action, id } = button.dataset; 
+                    if (action === 'edit') this.openUserEditModal(id);
+                    if (action === 'toggle') App.auth.toggleUserStatus(id); 
+                });
+                // Modal listeners
+                const modalEls = App.elements.userEditModal;
+                modalEls.closeBtn.addEventListener('click', () => this.closeUserEditModal());
+                modalEls.overlay.addEventListener('click', e => { if(e.target === modalEls.overlay) this.closeUserEditModal(); });
+                modalEls.btnSaveChanges.addEventListener('click', () => App.auth.saveUserChanges(modalEls.editingUserId.value));
+                modalEls.btnResetPassword.addEventListener('click', () => App.auth.resetUserPassword(modalEls.editingUserId.value));
+                modalEls.btnDeleteUser.addEventListener('click', () => App.auth.deleteUser(modalEls.editingUserId.value));
+                modalEls.role.addEventListener('change', (e) => this.updatePermissionsForRole(e.target.value, '#editUserPermissionGrid'));
+
                 App.elements.cadastros.btnSaveFarm.addEventListener('click', () => App.actions.saveFarm());
                 App.elements.cadastros.farmSelect.addEventListener('change', (e) => this.renderTalhaoList(e.target.value));
                 App.elements.cadastros.talhaoList.addEventListener('click', e => { const btn = e.target.closest('button'); if(!btn) return; const { action, id } = btn.dataset; if(action === 'edit-talhao') App.actions.editTalhao(id); if(action === 'delete-talhao') App.actions.deleteTalhao(id); });
@@ -1817,31 +2028,55 @@
                 if(filters.fazenda) data = data.filter(d => d.codigo === filters.fazenda); if(filters.talhao) data = data.filter(d => d.talhao.toLowerCase().includes(filters.talhao.toLowerCase())); if(filters.turno) data = data.filter(d => d.turno === filters.turno); if(filters.frente) data = data.filter(d => d.frenteServico.toLowerCase().includes(filters.frente.toLowerCase())); if(filters.inicio) data = data.filter(d => d.data >= filters.inicio); if(filters.fim) data = data.filter(d => d.data <= filters.fim);
                 return data;
             },
-            _generatePDF(title, headers, bodyData, finalY = 30) {
-                const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.setFontSize(18); doc.text(title, 105, 15, { align: 'center' });
-                doc.autoTable({ head: headers, body: bodyData, startY: finalY, headStyles: { fillColor: [46, 125, 50] } });
-                doc.save(`${title.toLowerCase().replace(/\s/g, '_')}.pdf`); App.ui.showAlert('Relatório PDF gerado com sucesso!');
+            _generatePDF(title, headers, bodyData, options = {}) {
+                const { jsPDF } = window.jspdf; 
+                const doc = new jsPDF({ orientation: 'landscape', ...options }); 
+                doc.setFontSize(18); 
+                doc.text(title, doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
+                doc.autoTable({ head: headers, body: bodyData, startY: 25, headStyles: { fillColor: [46, 125, 50] } });
+                doc.save(`${title.toLowerCase().replace(/\s/g, '_')}.pdf`); 
+                App.ui.showAlert('Relatório PDF gerado com sucesso!');
             },
             _generateCSV(filename, headers, bodyData) {
-                let csvContent = "data:text/csv;charset=utf-8," + headers.map(h => `"${h}"`).join(',') + '\n';
-                csvContent += bodyData.map(row => row.map(cell => `"${String(cell || '').replace(/"/g, '""')}"`).join(',')).join('\n');
-                const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri);
-                link.setAttribute("download", filename); document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                let csvContent = "\uFEFF" + headers.map(h => `"${h}"`).join(';') + '\n';
+                csvContent += bodyData.map(row => row.map(cell => `"${String(cell || '').replace(/"/g, '""')}"`).join(';')).join('\n');
+                const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+                const link = document.createElement("a"); 
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", filename); 
+                document.body.appendChild(link); 
+                link.click(); 
+                document.body.removeChild(link);
                 App.ui.showAlert('Relatório Excel (CSV) gerado com sucesso!');
             },
             generateBrocamentoPDF(dataToExport = null, title = 'Relatorio_Brocamento') {
+                const { filtroInicio, filtroFim } = App.elements.broca;
+                if (!filtroInicio.value || !filtroFim.value) {
+                    App.ui.showAlert("Por favor, selecione a Data Início e a Data Fim para gerar o relatório.", "warning");
+                    return;
+                }
                 const data = dataToExport || this._getFilteredData(App.state.registros, App.elements.broca);
                 const headers = [['Fazenda', 'Talhão', 'Data', 'Entrenós', 'Brocado', 'Brocamento (%)']];
                 const body = data.map(r => [r.fazenda, r.talhao, r.data, r.entrenos, r.brocado, r.brocamento]);
                 this._generatePDF(title, headers, body);
             },
             generateBrocamentoCSV(dataToExport = null, title = 'relatorio_brocamento.csv') {
+                const { filtroInicio, filtroFim } = App.elements.broca;
+                if (!filtroInicio.value || !filtroFim.value) {
+                    App.ui.showAlert("Por favor, selecione a Data Início e a Data Fim para gerar o relatório.", "warning");
+                    return;
+                }
                 const data = dataToExport || this._getFilteredData(App.state.registros, App.elements.broca);
                 const headers = ['Fazenda', 'Talhão', 'Data', 'Entrenós', 'Brocado', 'Brocamento (%)'];
                 const body = data.map(r => [r.fazenda, r.talhao, r.data, r.entrenos, r.brocado, r.brocamento]);
                 this._generateCSV(title, headers, body);
             },
             generatePerdaPDF(dataToExport = null, title = null) {
+                const { filtroInicio, filtroFim } = App.elements.perda;
+                if (!filtroInicio.value || !filtroFim.value) {
+                    App.ui.showAlert("Por favor, selecione a Data Início e a Data Fim para gerar o relatório.", "warning");
+                    return;
+                }
                 const data = dataToExport || this._getFilteredData(App.state.perdas, App.elements.perda); 
                 const isDetailed = App.elements.perda.tipoRelatorio.value === 'B';
                 const finalTitle = title || (isDetailed ? 'Relatorio_Perda_Detalhado' : 'Relatorio_Perda_Resumido');
@@ -1850,6 +2085,11 @@
                 this._generatePDF(finalTitle, headers, body);
             },
             generatePerdaCSV(dataToExport = null, title = 'relatorio_perda.csv') {
+                const { filtroInicio, filtroFim } = App.elements.perda;
+                if (!filtroInicio.value || !filtroFim.value) {
+                    App.ui.showAlert("Por favor, selecione a Data Início e a Data Fim para gerar o relatório.", "warning");
+                    return;
+                }
                 const data = dataToExport || this._getFilteredData(App.state.perdas, App.elements.perda);
                 const headers = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média'];
                 const body = data.map(p => [p.fazenda, p.talhao, p.data, p.frenteServico, p.turno, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media]);
@@ -1859,6 +2099,9 @@
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF({ orientation: 'landscape' });
                 let finalY = 15;
+                let grandTotalArea = 0;
+                let grandTotalProducao = 0;
+                let finalEndDate = null;
 
                 const plansToReport = planId 
                     ? App.state.harvestPlans.filter(p => p.id == planId)
@@ -1874,70 +2117,63 @@
                 doc.text(reportTitle, doc.internal.pageSize.getWidth() / 2, finalY, { align: 'center' });
                 finalY += 15;
 
-                plansToReport.forEach((plan, planIndex) => {
-                    if (planIndex > 0) {
-                        doc.addPage();
-                        finalY = 15;
-                    }
-
-                    if (!planId) {
-                        doc.setFontSize(14);
-                        doc.text(`Frente: ${plan.frontName}`, 14, finalY);
-                        finalY += 10;
-                    }
+                plansToReport.forEach((plan) => {
+                    doc.setFontSize(14);
+                    doc.text(`Frente: ${plan.frontName}`, 14, finalY);
+                    finalY += 7;
 
                     const head = [['Seq.', 'Fazenda', 'Talhões', 'Área', 'Prod.', 'ATR', 'Idade (m)', 'Entrada', 'Saída']];
                     const body = [];
                     let currentDate = new Date(plan.startDate + 'T03:00:00Z');
                     const dailyTon = parseFloat(plan.dailyRate) || 1;
-                    let grandTotalProducao = 0;
-                    let grandTotalArea = 0;
+                    let subTotalProducao = 0;
+                    let subTotalArea = 0;
 
                     plan.sequence.forEach((group, index) => {
                         const diasNecessarios = dailyTon > 0 ? group.totalProducao / dailyTon : 0;
                         const dataEntrada = new Date(currentDate.getTime());
                         currentDate.setDate(currentDate.getDate() + diasNecessarios);
                         const dataSaida = new Date(currentDate.getTime());
-                        
                         const idadeMediaMeses = App.actions.calculateAverageAge(group, plan.startDate);
 
                         body.push([
-                            index + 1,
-                            group.fazendaName,
-                            group.plots.map(p => p.talhaoName).join(', '),
-                            group.totalArea.toFixed(2),
-                            group.totalProducao.toFixed(2),
-                            group.atr,
-                            idadeMediaMeses,
-                            dataEntrada.toLocaleDateString('pt-BR'),
-                            dataSaida.toLocaleDateString('pt-BR')
+                            index + 1, group.fazendaName, group.plots.map(p => p.talhaoName).join(', '),
+                            group.totalArea.toFixed(2), group.totalProducao.toFixed(2), group.atr,
+                            idadeMediaMeses, dataEntrada.toLocaleDateString('pt-BR'), dataSaida.toLocaleDateString('pt-BR')
                         ]);
                         currentDate.setDate(currentDate.getDate() + 1);
-                        grandTotalProducao += group.totalProducao;
-                        grandTotalArea += group.totalArea;
+                        subTotalProducao += group.totalProducao;
+                        subTotalArea += group.totalArea;
                     });
+                    
+                    grandTotalProducao += subTotalProducao;
+                    grandTotalArea += subTotalArea;
+                    finalEndDate = currentDate;
 
                     doc.autoTable({
-                        head: head,
-                        body: body,
-                        startY: finalY,
-                        headStyles: { fillColor: [46, 125, 50] },
-                        styles: { fontSize: 8 },
-                        columnStyles: { 2: { cellWidth: 50 } }
+                        head: head, body: body, startY: finalY,
+                        headStyles: { fillColor: [46, 125, 50] }, styles: { fontSize: 8 },
+                        columnStyles: { 2: { cellWidth: 50 } },
+                        didDrawPage: (data) => { finalY = data.cursor.y; }
                     });
-
-                    finalY = doc.lastAutoTable.finalY + 10;
-
-                    doc.setFontSize(10);
-                    doc.text(`Resumo do Plano:`, 14, finalY);
-                    finalY += 5;
-                    doc.text(`- Produção Total Estimada: ${grandTotalProducao.toFixed(2)} ton`, 14, finalY);
-                    finalY += 5;
-                    doc.text(`- Área Total: ${grandTotalArea.toFixed(2)} ha`, 14, finalY);
-                    finalY += 5;
-                    doc.text(`- Data Final de Saída Prevista: ${new Date(currentDate.getTime() - (24*60*60*1000)).toLocaleDateString('pt-BR')}`, 14, finalY);
+                    finalY = doc.lastAutoTable.finalY + 5;
+                    
+                    doc.setFontSize(9);
+                    doc.text(`Subtotal - Frente ${plan.frontName}: Área ${subTotalArea.toFixed(2)} ha | Produção ${subTotalProducao.toFixed(2)} ton`, 14, finalY);
                     finalY += 10;
                 });
+                
+                // Grand Total
+                finalY += 5;
+                doc.setFontSize(12);
+                doc.text(`Resumo Geral da Safra:`, 14, finalY);
+                finalY += 7;
+                doc.setFontSize(10);
+                doc.text(`- Produção Total Estimada: ${grandTotalProducao.toFixed(2)} ton`, 14, finalY);
+                finalY += 5;
+                doc.text(`- Área Total: ${grandTotalArea.toFixed(2)} ha`, 14, finalY);
+                finalY += 5;
+                doc.text(`- Previsão de Término da Safra: ${new Date(finalEndDate.getTime() - (24*60*60*1000)).toLocaleDateString('pt-BR')}`, 14, finalY);
 
                 doc.save(`${reportTitle.toLowerCase().replace(/\s/g, '_')}.pdf`);
                 App.ui.showAlert('Relatório PDF gerado com sucesso!');
@@ -1955,6 +2191,9 @@
                 const reportTitle = planId ? `plano_${plansToReport[0].frontName.toLowerCase().replace(/\s/g, '_')}.csv` : "planejamento_geral_colheita.csv";
                 const headers = ['Frente', 'Seq.', 'Fazenda', 'Talhões', 'Área (ha)', 'Produção (ton)', 'ATR', 'Idade (meses)', 'Entrada', 'Saída'];
                 const body = [];
+                let grandTotalArea = 0;
+                let grandTotalProducao = 0;
+                let finalEndDate = null;
 
                 plansToReport.forEach(plan => {
                     let currentDate = new Date(plan.startDate + 'T03:00:00Z');
@@ -1968,20 +2207,25 @@
                         const idadeMediaMeses = App.actions.calculateAverageAge(group, plan.startDate);
 
                         body.push([
-                            plan.frontName,
-                            index + 1,
-                            group.fazendaName,
+                            plan.frontName, index + 1, group.fazendaName,
                             group.plots.map(p => p.talhaoName).join('; '),
-                            group.totalArea.toFixed(2),
-                            group.totalProducao.toFixed(2),
-                            group.atr,
-                            idadeMediaMeses,
-                            dataEntrada.toLocaleDateString('pt-BR'),
+                            group.totalArea.toFixed(2), group.totalProducao.toFixed(2),
+                            group.atr, idadeMediaMeses, dataEntrada.toLocaleDateString('pt-BR'),
                             dataSaida.toLocaleDateString('pt-BR')
                         ]);
                         currentDate.setDate(currentDate.getDate() + 1);
+                        grandTotalProducao += group.totalProducao;
+                        grandTotalArea += group.totalArea;
                     });
+                    finalEndDate = currentDate;
                 });
+                
+                // Add summary rows
+                body.push([]); // Blank line
+                body.push(['Resumo Geral da Safra']);
+                body.push(['Produção Total (ton)', grandTotalProducao.toFixed(2)]);
+                body.push(['Área Total (ha)', grandTotalArea.toFixed(2)]);
+                body.push(['Previsão de Término', new Date(finalEndDate.getTime() - (24*60*60*1000)).toLocaleDateString('pt-BR')]);
 
                 this._generateCSV(reportTitle, headers, body);
             }
