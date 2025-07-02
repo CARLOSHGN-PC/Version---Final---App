@@ -47,8 +47,8 @@
     #btnLogin { margin-top: 24px; width: 100%; padding: 16px; background: linear-gradient(to right, var(--color-primary), var(--color-accent)); color: var(--color-white); border: none; border-radius: var(--border-radius); font-weight: 600; font-size: 16px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
     #btnLogin:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
     #loginMessage { color: var(--color-danger); min-height: 20px; margin-top: 16px; font-size: 14px; font-weight: 500; transition: var(--transition); }
-    header { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: linear-gradient(to right, var(--color-primary), var(--color-primary-dark)); color: var(--color-white); display: flex; align-items: center; padding: 0 24px; box-shadow: var(--shadow-md); z-index: 1000; user-select: none; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
-    header h1 { margin: 0; font-weight: 600; font-size: 20px; flex-grow: 1; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    header { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: linear-gradient(to right, var(--color-primary), var(--color-primary-dark)); color: var(--color-white); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; box-shadow: var(--shadow-md); z-index: 1000; user-select: none; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+    header h1 { margin: 0; font-weight: 600; font-size: 20px; flex-grow: 1; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; position: absolute; left: 50%; transform: translateX(-50%); }
     .menu-toggle { background: rgba(255, 255, 255, 0.1); border-radius: var(--border-radius); border: none; cursor: pointer; width: 48px; height: 48px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; z-index: 1100; transition: var(--transition); }
     .menu-toggle:hover { background: rgba(255, 255, 255, 0.2); }
     .menu-toggle div { height: 3px; width: 24px; background: var(--color-white); border-radius: 3px; transition: var(--transition); }
@@ -93,8 +93,106 @@
     #alertContainer { position: fixed; top: 20px; right: 20px; background-color: var(--color-success); color: #fff; padding: 16px 24px; border-radius: var(--border-radius); font-weight: 500; font-size: 15px; opacity: 0; pointer-events: none; transition: all 0.4s ease; transform: translateY(-20px); z-index: 2500; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-xl); max-width: 90%; }
     #alertContainer.error { background-color: var(--color-danger); } #alertContainer.warning { background-color: var(--color-warning); } #alertContainer.info { background-color: var(--color-info); }
     #alertContainer.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-    #logoutInfo { position: absolute; top: 15px; right: 20px; background: rgba(255,255,255,0.9); color: var(--color-primary); padding: 8px 16px; border-radius: var(--border-radius); font-weight: 500; user-select: none; display: flex; align-items: center; gap: 10px; font-size: 14px; z-index: 1200; box-shadow: var(--shadow-sm); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
-    #logoutBtn { background: var(--color-danger); border: none; color: white; padding: 6px 12px; border-radius: var(--border-radius); cursor: pointer; font-weight: 500; transition: var(--transition); display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    
+    /* User Menu in Header */
+    #user-menu-container {
+        position: relative;
+        z-index: 1200;
+    }
+    #user-menu-toggle {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--color-white);
+        padding: 8px 12px;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        border: 1px solid rgba(255,255,255,0.2);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    #user-menu-toggle:hover, #user-menu-toggle.open {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    #user-menu-toggle .fa-chevron-down {
+        transition: transform 0.2s ease;
+    }
+    #user-menu-toggle.open .fa-chevron-down {
+        transform: rotate(180deg);
+    }
+
+    #user-menu-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        background: var(--color-white);
+        color: var(--color-text);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        width: 240px;
+        overflow: hidden;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        transform-origin: top right;
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+        pointer-events: none;
+        display: block; /* Keep it block for animation */
+    }
+    #user-menu-dropdown.show {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        pointer-events: auto;
+    }
+    .user-menu-header {
+        padding: 16px;
+        background-color: #f8f9fa;
+    }
+    .user-menu-header p {
+        margin: 0;
+        line-height: 1.3;
+    }
+    .user-menu-header p strong {
+        font-size: 12px;
+        color: var(--color-text-light);
+    }
+    #userMenuUsername {
+        font-weight: 600;
+        color: var(--color-primary-dark);
+        font-size: 16px;
+        word-break: break-all;
+    }
+    .user-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        font-size: 14px;
+        color: var(--color-text-light);
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .user-menu-item:not(#logoutBtn):hover {
+        background-color: #f1f5f9;
+    }
+    #logoutBtn {
+        width: 100%;
+        border: none;
+        background: transparent;
+        color: var(--color-danger);
+        font-weight: 500;
+        text-align: left;
+    }
+    #logoutBtn:hover {
+        background-color: #fef2f2;
+    }
+    #user-menu-dropdown hr {
+        border: none;
+        border-top: 1px solid var(--color-border);
+        margin: 0;
+    }
+
     .chart-container { position: relative; height: 300px; margin-bottom: 40px; }
     .chart-title { text-align: center; margin-bottom: 15px; font-weight: 500; color: var(--color-primary); }
     .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 30px; }
@@ -289,8 +387,7 @@
     .modal-footer button { margin-top: 0; }
 
     @media (max-width: 768px) {
-        header h1 { font-size: 18px; max-width: calc(100% - 120px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        #logoutInfo { flex-direction: column; align-items: flex-end; gap: 5px; padding: 6px 10px; }
+        header h1 { font-size: 16px; max-width: calc(100% - 180px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card { padding: 16px; }
         #harvestPlanTable th, #harvestPlanTable td { padding: 8px; font-size: 12px; }
         .card-header-actions {
@@ -334,11 +431,25 @@
             <div></div><div></div><div></div>
         </button>
         <h1><i class="fas fa-leaf"></i> Inspeção de Cana</h1>
-        <div id="logoutInfo" style="display:none;" role="region" aria-live="polite">
-            <span id="userNameDisplay"></span>
-            <span id="currentDateTime"></span>
-            <button id="logoutBtn" aria-label="Botão sair do sistema"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        
+        <div id="user-menu-container" style="display:none;">
+            <button id="user-menu-toggle" aria-label="Menu do Utilizador" aria-haspopup="true" aria-expanded="false">
+                <span id="userNameDisplay"></span>
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <div id="user-menu-dropdown" role="menu">
+                <div class="user-menu-header">
+                    <p><strong>Conectado como:</strong></p>
+                    <p id="userMenuUsername"></p>
+                </div>
+                <div id="currentDateTime" class="user-menu-item"></div>
+                <hr>
+                <button id="logoutBtn" role="menuitem" class="user-menu-item">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            </div>
         </div>
+
     </header>
 
     <nav class="menu" id="menu" aria-label="Menu Principal" tabindex="-1"></nav>
@@ -498,10 +609,21 @@
                      <input type="text" id="talhao" placeholder="Ex: T12, T15-A" required />
                      <div id="varietyDisplay"></div>
                 </div>
+                 <div class="form-col">
+                    <label for="entrenos" class="required">Entrenós Contados:</label>
+                    <input type="number" id="entrenos" min="1" placeholder="0" required />
+                </div>
+            </div>
+             <div class="form-row">
+                <div class="form-col"><label for="brocaBase" class="required">Brocado Base:</label><input type="number" id="brocaBase" min="0" value="0" required /></div>
+                <div class="form-col"><label for="brocaMeio" class="required">Brocado Meio:</label><input type="number" id="brocaMeio" min="0" value="0" required /></div>
+                <div class="form-col"><label for="brocaTopo" class="required">Brocado Topo:</label><input type="number" id="brocaTopo" min="0" value="0" required /></div>
             </div>
             <div class="form-row">
-                <div class="form-col"><label for="entrenos" class="required">Entrenós Contados:</label><input type="number" id="entrenos" min="1" placeholder="0" required /></div>
-                <div class="form-col"><label for="brocado" class="required">Quantidade de Brocado:</label><input type="number" id="brocado" min="0" placeholder="0" required /></div>
+                <div class="form-col">
+                    <label for="brocado">Total de Brocado (Automático):</label>
+                    <input type="number" id="brocado" min="0" placeholder="0" readonly style="background-color: #e9ecef;" />
+                </div>
             </div>
             <div class="resultado" id="resultado"></div>
             <button class="save" type="button" id="btnSalvarBrocamento"><i class="fas fa-save"></i> Guardar Inspeção</button>
@@ -584,7 +706,7 @@
                 </div>
                 <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
                 <button id="btnDownloadCsvTemplate" class="save" style="max-width: 300px; margin-top: 15px; background: var(--color-info);"><i class="fas fa-download"></i> Baixar Modelo CSV</button>
-                <small>Formato esperado: Cód;FAZENDA;TALHÃO;Área;Produção;Variedade;Distancia;DataUltimaColheita</small>
+                <small>Formato esperado: Cód;FAZENDA;TALHÃO;Área;Produção;Variedade;Corte;Distancia;DataUltimaColheita</small>
             </div>
 
             <div class="card" style="border-left-color: var(--color-purple); margin-top: 30px;">
@@ -606,6 +728,7 @@
                         <div class="form-col"><label for="talhaoName" class="required">Nome do Talhão:</label><input type="text" id="talhaoName"></div>
                         <div class="form-col"><label for="talhaoArea" class="required">Área (ha):</label><input type="number" id="talhaoArea"></div>
                         <div class="form-col"><label for="talhaoProducao" class="required">Produção (ton):</label><input type="number" id="talhaoProducao"></div>
+                         <div class="form-col"><label for="talhaoCorte">Corte:</label><input type="number" id="talhaoCorte" min="1" placeholder="Ex: 1"></div>
                     </div>
                     <div class="form-row">
                         <div class="form-col"><label for="talhaoVariedade">Variedade:</label><input type="text" id="talhaoVariedade"></div>
@@ -702,7 +825,7 @@
     
     const App = {
         config: {
-            appName: "Inspeção e Planeamento de Cana com IA",
+            appName: "Inspeção e Planejamento de Cana com IA",
             sessionKey: 'canaAppUserSession',
             menuConfig: [
                 { label: 'Dashboard', icon: 'fas fa-tachometer-alt', target: 'dashboard', permission: 'dashboard' },
@@ -752,11 +875,17 @@
             loginScreen: document.getElementById('loginScreen'), appScreen: document.getElementById('appScreen'),
             loginUser: document.getElementById('loginUser'), loginPass: document.getElementById('loginPass'),
             btnLogin: document.getElementById('btnLogin'), loginMessage: document.getElementById('loginMessage'),
-            headerTitle: document.querySelector('header h1'), logoutInfo: document.getElementById('logoutInfo'),
+            headerTitle: document.querySelector('header h1'),
             userNameDisplay: document.getElementById('userNameDisplay'), currentDateTime: document.getElementById('currentDateTime'),
             logoutBtn: document.getElementById('logoutBtn'), btnToggleMenu: document.getElementById('btnToggleMenu'),
             menu: document.getElementById('menu'), content: document.getElementById('content'),
             alertContainer: document.getElementById('alertContainer'),
+            userMenu: {
+                container: document.getElementById('user-menu-container'),
+                toggle: document.getElementById('user-menu-toggle'),
+                dropdown: document.getElementById('user-menu-dropdown'),
+                username: document.getElementById('userMenuUsername')
+            },
             dashboard: {
                 btnAnalisar: document.getElementById('btnAnalisarDashboard'),
                 aiCard: document.getElementById('ai-analysis-card'),
@@ -792,6 +921,7 @@
                 talhaoName: document.getElementById('talhaoName'),
                 talhaoArea: document.getElementById('talhaoArea'),
                 talhaoProducao: document.getElementById('talhaoProducao'),
+                talhaoCorte: document.getElementById('talhaoCorte'),
                 talhaoVariedade: document.getElementById('talhaoVariedade'),
                 talhaoDistancia: document.getElementById('talhaoDistancia'),
                 talhaoUltimaColheita: document.getElementById('talhaoUltimaColheita'),
@@ -835,7 +965,11 @@
                 codigo: document.getElementById('codigo'), fazendaNome: document.getElementById('fazendaNome'),
                 data: document.getElementById('data'), talhao: document.getElementById('talhao'),
                 varietyDisplay: document.getElementById('varietyDisplay'),
-                entrenos: document.getElementById('entrenos'), brocado: document.getElementById('brocado'),
+                entrenos: document.getElementById('entrenos'), 
+                base: document.getElementById('brocaBase'),
+                meio: document.getElementById('brocaMeio'),
+                topo: document.getElementById('brocaTopo'),
+                brocado: document.getElementById('brocado'),
                 resultado: document.getElementById('resultado'), btnSalvar: document.getElementById('btnSalvarBrocamento'),
                 filtroFazenda: document.getElementById('fazendaFiltroBrocamento'), filtroInicio: document.getElementById('inicioBrocamento'),
                 filtroFim: document.getElementById('fimBrocamento'), btnPDF: document.getElementById('btnPDFBrocamento'),
@@ -985,7 +1119,7 @@
             loadAll() { this.loadFazendas(); this.loadUsers(); this.loadPlanos(); this.loadHarvestPlans(); this.loadRegistros(); this.loadPerdas(); },
             load(key, defaultValue = []) { try { return JSON.parse(localStorage.getItem(key)) || defaultValue; } catch (e) { return defaultValue; } },
             save(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) { console.error(`Erro ao guardar '${key}'`, e); } },
-            loadFazendas() { App.state.fazendas = this.load('fazendas', [{code: '4012', name: "FAZ. LAGOA CERCADA", talhoes: [{id: 1, name: 'T-01', area: 50, producao: 4000, variedade: 'RB867515', distancia: 10, dataUltimaColheita: '2024-07-15'}, {id: 2, name: 'T-02', area: 35.5, producao: 3100, variedade: 'CTC4', distancia: 12, dataUltimaColheita: '2024-08-01'}, {id: 3, name: 'T-03A', area: 22, producao: 1950, variedade: 'RB966928', distancia: 11, dataUltimaColheita: '2024-06-20'}]}, {code: '4005', name: "FAZ. MAURO BORGES", talhoes: [{id: 34, name: 'T-MB-34', area: 2.84, producao: 227.2, variedade: 'RB988082', distancia: 25, dataUltimaColheita: '2024-05-10'}, {id: 35, name: 'T-MB-35', area: 3.1, producao: 250, variedade: 'RB988082', distancia: 26, dataUltimaColheita: '2024-05-15'}, {id: 36, name: 'T-MB-36', area: 5.2, producao: 450, variedade: 'RB988082', distancia: 27, dataUltimaColheita: '2024-05-20'}, {id: 4, name: 'T-MB-04', area: 10, producao: 900, variedade: 'CTC9001', distancia: 22, dataUltimaColheita: '2024-04-25'}, {id: 5, name: 'T-MB-05', area: 12, producao: 1100, variedade: 'CTC9001', distancia: 23, dataUltimaColheita: '2024-04-30'}, {id: 6, name: 'T-MB-06', area: 8, producao: 750, variedade: 'CTC9001', distancia: 24, dataUltimaColheita: '2024-06-05'}]}]); },
+            loadFazendas() { App.state.fazendas = this.load('fazendas', [{code: '4012', name: "FAZ. LAGOA CERCADA", talhoes: [{id: 1, name: 'T-01', area: 50, producao: 4000, variedade: 'RB867515', corte: 2, distancia: 10, dataUltimaColheita: '2024-07-15'}, {id: 2, name: 'T-02', area: 35.5, producao: 3100, variedade: 'CTC4', corte: 3, distancia: 12, dataUltimaColheita: '2024-08-01'}, {id: 3, name: 'T-03A', area: 22, producao: 1950, variedade: 'RB966928', corte: 1, distancia: 11, dataUltimaColheita: '2024-06-20'}]}, {code: '4005', name: "FAZ. MAURO BORGES", talhoes: [{id: 34, name: 'T-MB-34', area: 2.84, producao: 227.2, variedade: 'RB988082', corte: 1, distancia: 25, dataUltimaColheita: '2024-05-10'}, {id: 35, name: 'T-MB-35', area: 3.1, producao: 250, variedade: 'RB988082', corte: 1, distancia: 26, dataUltimaColheita: '2024-05-15'}, {id: 36, name: 'T-MB-36', area: 5.2, producao: 450, variedade: 'RB988082', corte: 2, distancia: 27, dataUltimaColheita: '2024-05-20'}, {id: 4, name: 'T-MB-04', area: 10, producao: 900, variedade: 'CTC9001', corte: 4, distancia: 22, dataUltimaColheita: '2024-04-25'}, {id: 5, name: 'T-MB-05', area: 12, producao: 1100, variedade: 'CTC9001', corte: 4, distancia: 23, dataUltimaColheita: '2024-04-30'}, {id: 6, name: 'T-MB-06', area: 8, producao: 750, variedade: 'CTC9001', corte: 3, distancia: 24, dataUltimaColheita: '2024-06-05'}]}]); },
             saveFazendas() { this.save('fazendas', App.state.fazendas); },
             loadUsers() { App.state.users = this.load('users', []); },
             saveUsers() { this.save('users', App.state.users); },
@@ -1004,16 +1138,25 @@
                 App.elements.loadingOverlay.style.display = isLoading ? 'flex' : 'none';
             },
             showLoginScreen() {
-                App.elements.loginScreen.style.display = 'flex'; App.elements.appScreen.style.display = 'none';
-                App.elements.logoutInfo.style.display = 'none'; App.elements.loginUser.value = '';
-                App.elements.loginPass.value = ''; App.elements.loginUser.focus(); this.closeAllMenus();
+                App.elements.loginScreen.style.display = 'flex'; 
+                App.elements.appScreen.style.display = 'none';
+                App.elements.userMenu.container.style.display = 'none';
+                App.elements.loginUser.value = '';
+                App.elements.loginPass.value = ''; 
+                App.elements.loginUser.focus(); 
+                this.closeAllMenus();
             },
             showAppScreen() {
                 const { currentUser } = App.state;
-                App.elements.loginScreen.style.display = 'none'; App.elements.appScreen.style.display = 'flex';
-                App.elements.logoutInfo.style.display = 'flex'; App.elements.userNameDisplay.textContent = currentUser.username;
-                this.updateDateTime(); setInterval(() => this.updateDateTime(), 60000);
-                this.renderMenu(); this.renderAllDynamicContent();
+                App.elements.loginScreen.style.display = 'none'; 
+                App.elements.appScreen.style.display = 'flex';
+                App.elements.userMenu.container.style.display = 'block';
+                App.elements.userNameDisplay.textContent = currentUser.username;
+                App.elements.userMenu.username.textContent = currentUser.username;
+                this.updateDateTime(); 
+                setInterval(() => this.updateDateTime(), 60000);
+                this.renderMenu(); 
+                this.renderAllDynamicContent();
                 if (currentUser.username === 'admin' && App.auth._hashPassword('admin123') === currentUser.password) {
                     this.showAlert("Por segurança, altere a sua senha padrão.", "warning");
                 }
@@ -1033,7 +1176,7 @@
                 alertContainer.className = `show ${type}`;
                 setTimeout(() => alertContainer.classList.remove('show'), duration);
             },
-            updateDateTime() { App.elements.currentDateTime.textContent = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); },
+            updateDateTime() { App.elements.currentDateTime.innerHTML = `<i class="fas fa-clock"></i> ${new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`; },
             renderMenu() {
                 const { menu } = App.elements; const { menuConfig } = App.config; const { currentUser } = App.state;
                 menu.innerHTML = ''; 
@@ -1124,8 +1267,8 @@
                     if (!select) return;
                     const currentValue = select.value;
                     select.innerHTML = '<option value="">Selecione...</option>';
-                    App.state.fazendas.sort((a, b) => a.name.localeCompare(b.name)).forEach(farm => {
-                        select.innerHTML += `<option value="${farm.code}">${farm.name} (${farm.code})</option>`;
+                    App.state.fazendas.sort((a, b) => parseInt(a.code) - parseInt(b.code)).forEach(farm => {
+                        select.innerHTML += `<option value="${farm.code}">${farm.code} - ${farm.name}</option>`;
                     });
                     select.value = currentValue;
                 });
@@ -1140,8 +1283,8 @@
             renderFarmSelect() {
                 const { farmSelect } = App.elements.cadastros;
                 farmSelect.innerHTML = '<option value="">Selecione uma fazenda...</option>';
-                App.state.fazendas.sort((a,b) => a.name.localeCompare(b.name)).forEach(farm => {
-                    farmSelect.innerHTML += `<option value="${farm.code}">${farm.name}</option>`;
+                App.state.fazendas.sort((a,b) => parseInt(a.code) - parseInt(b.code)).forEach(farm => {
+                    farmSelect.innerHTML += `<option value="${farm.code}">${farm.code} - ${farm.name}</option>`;
                 });
             },
             renderTalhaoList(farmCode) {
@@ -1153,7 +1296,7 @@
                     return;
                 }
                 talhaoManagementContainer.style.display = 'block';
-                selectedFarmName.textContent = farm.name;
+                selectedFarmName.textContent = `${farm.code} - ${farm.name}`;
 
                 if (!farm.talhoes || farm.talhoes.length === 0) {
                     talhaoList.innerHTML = '<p>Nenhum talhão cadastrado para esta fazenda.</p>';
@@ -1161,7 +1304,7 @@
                 }
                 const table = document.createElement('table');
                 table.id = 'harvestPlanTable'; 
-                table.innerHTML = `<thead><tr><th>Nome</th><th>Área</th><th>Produção</th><th>Variedade</th><th>Distância</th><th>Última Colheita</th><th>Ações</th></tr></thead><tbody></tbody>`;
+                table.innerHTML = `<thead><tr><th>Nome</th><th>Área</th><th>Produção</th><th>Variedade</th><th>Corte</th><th>Distância</th><th>Última Colheita</th><th>Ações</th></tr></thead><tbody></tbody>`;
                 const tbody = table.querySelector('tbody');
                 farm.talhoes.sort((a,b) => a.name.localeCompare(b.name)).forEach(talhao => {
                     const row = tbody.insertRow();
@@ -1170,6 +1313,7 @@
                         <td>${talhao.area || ''}</td>
                         <td>${talhao.producao || ''}</td>
                         <td>${talhao.variedade || ''}</td>
+                        <td>${talhao.corte || ''}</td>
                         <td>${talhao.distancia || ''}</td>
                         <td>${talhao.dataUltimaColheita ? new Date(talhao.dataUltimaColheita + 'T03:00:00Z').toLocaleDateString('pt-BR') : ''}</td>
                         <td>
@@ -1218,6 +1362,7 @@
                                 <span><i class="fas fa-ruler-combined"></i>Área: ${talhao.area || 0} ha</span>
                                 <span><i class="fas fa-weight-hanging"></i>Produção: ${talhao.producao || 0} ton</span>
                                 <span><i class="fas fa-seedling"></i>Variedade: ${talhao.variedade || 'N/A'}</span>
+                                <span><i class="fas fa-cut"></i>Corte: ${talhao.corte || 'N/A'}</span>
                             </div>
                         </div>
                     `;
@@ -1267,7 +1412,7 @@
                     const dataPlano = new Date(plano.dataPrevista + 'T03:00:00Z');
                     if (plano.status === 'Pendente' && dataPlano < hoje) { status = 'Atrasado'; }
                     const fazenda = App.state.fazendas.find(f => f.code === plano.fazendaCodigo);
-                    const fazendaNome = fazenda ? fazenda.name : 'Desconhecida';
+                    const fazendaNome = fazenda ? `${fazenda.code} - ${fazenda.name}` : 'Desconhecida';
                     const card = document.createElement('div'); card.className = 'plano-card';
                     card.innerHTML = `<div class="plano-header"><span class="plano-title"><i class="fas fa-${plano.tipo === 'broca' ? 'bug' : 'dollar-sign'}"></i> ${fazendaNome} - Talhão: ${plano.talhao}</span><span class="plano-status ${status.toLowerCase()}">${status}</span></div><div class="plano-details"><div><i class="fas fa-calendar-day"></i> Data Prevista: ${dataPlano.toLocaleDateString('pt-BR')}</div><div><i class="fas fa-user-check"></i> Responsável: ${plano.usuarioResponsavel}</div>${plano.meta ? `<div><i class="fas fa-bullseye"></i> Meta: ${plano.meta}</div>` : ''}</div>${plano.observacoes ? `<div style="margin-top:8px;font-size:14px;"><i class="fas fa-info-circle"></i> Obs: ${plano.observacoes}</div>` : ''}<div class="plano-actions">${status !== 'Concluído' ? `<button class="btn-excluir" style="background-color: var(--color-success)" data-action="concluir" data-id="${plano.id}"><i class="fas fa-check"></i> Marcar Concluído</button>` : ''}<button class="btn-excluir" data-action="excluir" data-id="${plano.id}"><i class="fas fa-trash"></i> Excluir</button></div>`;
                     lista.appendChild(card);
@@ -1341,7 +1486,7 @@
                     row.dataset.id = group.id;
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${group.fazendaName}</td>
+                        <td>${group.fazendaCodigo} - ${group.fazendaName}</td>
                         <td class="talhao-list-cell">${group.plots.map(p => p.talhaoName).join(', ')}</td>
                         <td>${group.totalArea.toFixed(2)}</td>
                         <td>${group.totalProducao.toFixed(2)}</td>
@@ -1369,12 +1514,27 @@
             },
             updateFazendaNome(inputEl, outputEl) { 
                 const farm = App.state.fazendas.find(f => f.code === inputEl.value.trim());
-                outputEl.textContent = farm ? `Fazenda: ${farm.name}` : ''; 
+                outputEl.textContent = farm ? `${farm.code} - ${farm.name}` : ''; 
             },
             validateFields(ids) { return ids.every(id => { const el = document.getElementById(id); const valid = el.value.trim() !== ''; el.style.borderColor = valid ? 'var(--color-border)' : 'var(--color-danger)'; if (!valid) el.focus(); return valid; }); },
+            updateBrocadoTotal() {
+                const { broca } = App.elements;
+                const base = parseInt(broca.base.value) || 0;
+                const meio = parseInt(broca.meio.value) || 0;
+                const topo = parseInt(broca.topo.value) || 0;
+                broca.brocado.value = base + meio + topo;
+            },
             calculateBrocamento() {
-                const entrenos = parseInt(App.elements.broca.entrenos.value) || 0; const brocado = parseInt(App.elements.broca.brocado.value) || 0;
-                const resultadoEl = App.elements.broca.resultado; if (entrenos > 0) { const porcentagem = (brocado / entrenos) * 100; resultadoEl.textContent = `Brocamento: ${porcentagem.toFixed(2).replace('.', ',')}%`; resultadoEl.style.color = porcentagem > 20 ? 'var(--color-danger)' : 'var(--color-success)'; } else { resultadoEl.textContent = ''; }
+                const entrenos = parseInt(App.elements.broca.entrenos.value) || 0; 
+                const brocado = parseInt(App.elements.broca.brocado.value) || 0;
+                const resultadoEl = App.elements.broca.resultado; 
+                if (entrenos > 0) { 
+                    const porcentagem = (brocado / entrenos) * 100; 
+                    resultadoEl.textContent = `Brocamento: ${porcentagem.toFixed(2).replace('.', ',')}%`; 
+                    resultadoEl.style.color = porcentagem > 20 ? 'var(--color-danger)' : 'var(--color-success)'; 
+                } else { 
+                    resultadoEl.textContent = ''; 
+                }
             },
             calculatePerda() {
                 const fields = ['canaInteira', 'tolete', 'toco', 'ponta', 'estilhaco', 'pedaco'];
@@ -1417,11 +1577,31 @@
                     App.elements.menu.classList.toggle('open');
                     App.elements.btnToggleMenu.classList.toggle('open');
                 });
+                
+                // Combined click listener for closing menus
                 document.addEventListener('click', (e) => { 
+                    // Close side menu
                     if (!App.elements.menu.contains(e.target) && !App.elements.btnToggleMenu.contains(e.target)) {
                         this.closeAllMenus();
                     }
+                    // Close user menu
+                    if (!App.elements.userMenu.container.contains(e.target)) {
+                        App.elements.userMenu.dropdown.classList.remove('show');
+                        App.elements.userMenu.toggle.classList.remove('open');
+                        App.elements.userMenu.toggle.setAttribute('aria-expanded', 'false');
+                    }
                 });
+
+                // User menu toggle
+                App.elements.userMenu.toggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const dropdown = App.elements.userMenu.dropdown;
+                    const toggle = App.elements.userMenu.toggle;
+                    const isShown = dropdown.classList.toggle('show');
+                    toggle.classList.toggle('open', isShown);
+                    toggle.setAttribute('aria-expanded', isShown);
+                });
+
                 App.elements.dashboard.btnAnalisar.addEventListener('click', () => App.gemini.getDashboardAnalysis());
                 App.elements.users.role.addEventListener('change', (e) => this.updatePermissionsForRole(e.target.value));
                 App.elements.users.btnCreate.addEventListener('click', () => App.auth.createUser());
@@ -1490,7 +1670,10 @@
                 App.elements.broca.codigo.addEventListener('input', () => this.updateFazendaNome(App.elements.broca.codigo, App.elements.broca.fazendaNome));
                 App.elements.broca.talhao.addEventListener('input', () => App.actions.findVarietyForTalhao());
                 App.elements.broca.codigo.addEventListener('change', () => App.actions.findVarietyForTalhao());
-                ['entrenos', 'brocado'].forEach(id => document.getElementById(id).addEventListener('input', () => this.calculateBrocamento()));
+                ['entrenos', 'brocaBase', 'brocaMeio', 'brocaTopo'].forEach(id => document.getElementById(id).addEventListener('input', () => {
+                    this.updateBrocadoTotal();
+                    this.calculateBrocamento();
+                }));
                 App.elements.broca.btnSalvar.addEventListener('click', () => App.actions.saveBrocamento());
                 
                 // --- Perda Listeners ---
@@ -1559,7 +1742,7 @@
                 farmCode.value = ''; farmName.value = '';
             },
             saveTalhao() {
-                const { farmSelect, talhaoId, talhaoName, talhaoArea, talhaoProducao, talhaoVariedade, talhaoDistancia, talhaoUltimaColheita } = App.elements.cadastros;
+                const { farmSelect, talhaoId, talhaoName, talhaoArea, talhaoProducao, talhaoCorte, talhaoVariedade, talhaoDistancia, talhaoUltimaColheita } = App.elements.cadastros;
                 const farmCode = farmSelect.value;
                 const farm = App.state.fazendas.find(f => f.code === farmCode);
                 if (!farm) { App.ui.showAlert("Selecione uma fazenda.", "error"); return; }
@@ -1568,6 +1751,7 @@
                     name: talhaoName.value.trim().toUpperCase(),
                     area: parseFloat(talhaoArea.value),
                     producao: parseFloat(talhaoProducao.value),
+                    corte: parseInt(talhaoCorte.value) || 1,
                     variedade: talhaoVariedade.value.trim(),
                     distancia: parseFloat(talhaoDistancia.value) || 0,
                     dataUltimaColheita: talhaoUltimaColheita.value
@@ -1583,7 +1767,7 @@
                 }
                 App.data.saveFazendas();
                 App.ui.renderTalhaoList(farmCode);
-                [talhaoId, talhaoName, talhaoArea, talhaoProducao, talhaoVariedade, talhaoDistancia, talhaoUltimaColheita].forEach(el => el.value = '');
+                [talhaoId, talhaoName, talhaoArea, talhaoProducao, talhaoCorte, talhaoVariedade, talhaoDistancia, talhaoUltimaColheita].forEach(el => el.value = '');
             },
             editTalhao(talhaoId) {
                 const { farmSelect, ...talhaoEls } = App.elements.cadastros;
@@ -1594,6 +1778,7 @@
                     talhaoEls.talhaoName.value = talhao.name;
                     talhaoEls.talhaoArea.value = talhao.area;
                     talhaoEls.talhaoProducao.value = talhao.producao;
+                    talhaoEls.talhaoCorte.value = talhao.corte;
                     talhaoEls.talhaoVariedade.value = talhao.variedade;
                     talhaoEls.talhaoDistancia.value = talhao.distancia;
                     talhaoEls.talhaoUltimaColheita.value = talhao.dataUltimaColheita;
@@ -1844,16 +2029,24 @@
             },
             saveBrocamento() {
                 const { broca } = App.elements;
-                if (!App.ui.validateFields(['codigo', 'data', 'talhao', 'entrenos', 'brocado'])) { App.ui.showAlert("Preencha todos os campos obrigatórios!", "error"); return; }
+                if (!App.ui.validateFields(['codigo', 'data', 'talhao', 'entrenos', 'brocaBase', 'brocaMeio', 'brocaTopo'])) { App.ui.showAlert("Preencha todos os campos obrigatórios!", "error"); return; }
                 const farm = App.state.fazendas.find(f => f.code === broca.codigo.value.trim());
                 const newEntry = {
                     codigo: broca.codigo.value.trim(), fazenda: farm ? farm.name : 'Desconhecida', data: broca.data.value,
-                    talhao: broca.talhao.value.trim(), entrenos: parseInt(broca.entrenos.value), brocado: parseInt(broca.brocado.value),
+                    talhao: broca.talhao.value.trim(), 
+                    entrenos: parseInt(broca.entrenos.value), 
+                    base: parseInt(broca.base.value),
+                    meio: parseInt(broca.meio.value),
+                    topo: parseInt(broca.topo.value),
+                    brocado: parseInt(broca.brocado.value),
                     brocamento: (((parseInt(broca.brocado.value) || 0) / (parseInt(broca.entrenos.value) || 1)) * 100).toFixed(2).replace('.', ','),
                     usuario: App.state.currentUser.username
                 };
                 App.state.registros.push(newEntry); App.data.saveRegistros(); App.ui.showAlert('Inspeção guardada com sucesso!');
-                ['codigo','data','talhao','entrenos','brocado'].forEach(id => document.getElementById(id).value = '');
+                ['codigo','data','talhao','entrenos','brocaBase', 'brocaMeio', 'brocaTopo', 'brocado'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('brocaBase').value = 0;
+                document.getElementById('brocaMeio').value = 0;
+                document.getElementById('brocaTopo').value = 0;
                 broca.fazendaNome.textContent = ''; broca.resultado.textContent = ''; broca.varietyDisplay.textContent = '';
                 App.charts.renderAll();
                 this.verificarEAtualizarPlano('broca', newEntry.codigo, newEntry.talhao);
@@ -1893,6 +2086,7 @@
                             farm_code: fileHeaders.indexOf('COD'), farm_name: fileHeaders.indexOf('FAZENDA'),
                             talhao_name: fileHeaders.indexOf('TALHAO'), talhao_area: fileHeaders.indexOf('AREA'),
                             talhao_producao: fileHeaders.indexOf('PRODUCAO'), talhao_variedade: fileHeaders.indexOf('VARIEDADE'),
+                            talhao_corte: fileHeaders.indexOf('CORTE'),
                             talhao_distancia: fileHeaders.indexOf('DISTANCIA'),
                             talhao_ultima_colheita: fileHeaders.indexOf('DATAULTIMACOLHEITA'),
                         };
@@ -1929,6 +2123,7 @@
                                 talhao.area = parseFloat(data[headerIndexes.talhao_area]?.trim().replace(',', '.')) || talhao.area;
                                 talhao.producao = parseFloat(data[headerIndexes.talhao_producao]?.trim().replace(',', '.')) || talhao.producao;
                                 talhao.variedade = data[headerIndexes.talhao_variedade]?.trim() || talhao.variedade;
+                                talhao.corte = parseInt(data[headerIndexes.talhao_corte]?.trim()) || talhao.corte;
                                 talhao.distancia = parseFloat(data[headerIndexes.talhao_distancia]?.trim().replace(',', '.')) || talhao.distancia;
                                 talhao.dataUltimaColheita = data[headerIndexes.talhao_ultima_colheita]?.trim() || talhao.dataUltimaColheita;
                                 updatedCount++;
@@ -1939,6 +2134,7 @@
                                     area: parseFloat(data[headerIndexes.talhao_area]?.trim().replace(',', '.')) || 0,
                                     producao: parseFloat(data[headerIndexes.talhao_producao]?.trim().replace(',', '.')) || 0,
                                     variedade: data[headerIndexes.talhao_variedade]?.trim() || '',
+                                    corte: parseInt(data[headerIndexes.talhao_corte]?.trim()) || 1,
                                     distancia: parseFloat(data[headerIndexes.talhao_distancia]?.trim().replace(',', '.')) || 0,
                                     dataUltimaColheita: data[headerIndexes.talhao_ultima_colheita]?.trim() || '',
                                 });
@@ -1957,8 +2153,8 @@
                 reader.readAsText(file, 'ISO-8859-1');
             },
             downloadCsvTemplate() {
-                const headers = "Cód;FAZENDA;TALHÃO;Área;Produção;Variedade;Distancia;DataUltimaColheita";
-                const exampleRow = "4012;FAZ LAGOA CERCADA;T-01;50;4000;RB867515;10;2024-07-15";
+                const headers = "Cód;FAZENDA;TALHÃO;Área;Produção;Variedade;Corte;Distancia;DataUltimaColheita";
+                const exampleRow = "4012;FAZ LAGOA CERCADA;T-01;50;4000;RB867515;2;10;2024-07-15";
                 const csvContent = "\uFEFF" + headers + "\n" + exampleRow;
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const url = URL.createObjectURL(blob);
@@ -2000,8 +2196,14 @@
             renderAll() { this.renderBrocamentoCharts(); this.renderPerdaCharts(); },
             _createOrUpdateChart(id, config) { const ctx = document.getElementById(id)?.getContext('2d'); if(!ctx) return; if (App.state.charts[id]) { App.state.charts[id].destroy(); } App.state.charts[id] = new Chart(ctx, config); },
             renderBrocamentoCharts() {
-                const dadosPorFazenda = App.state.registros.reduce((acc, reg) => { acc[reg.fazenda] = acc[reg.fazenda] || []; acc[reg.fazenda].push(parseFloat(reg.brocamento.replace(',', '.'))); return acc; }, {});
-                const labels = Object.keys(dadosPorFazenda); const medias = labels.map(f => (dadosPorFazenda[f].reduce((a,b)=>a+b,0) / dadosPorFazenda[f].length).toFixed(2));
+                const dadosPorFazenda = App.state.registros.reduce((acc, reg) => { 
+                    const fazendaKey = `${reg.codigo} - ${reg.fazenda}`;
+                    acc[fazendaKey] = acc[fazendaKey] || []; 
+                    acc[fazendaKey].push(parseFloat(reg.brocamento.replace(',', '.'))); 
+                    return acc; 
+                }, {});
+                const labels = Object.keys(dadosPorFazenda).sort((a,b) => parseInt(a) - parseInt(b)); 
+                const medias = labels.map(f => (dadosPorFazenda[f].reduce((a,b)=>a+b,0) / dadosPorFazenda[f].length).toFixed(2));
                 this._createOrUpdateChart('graficoBrocamento', { type: 'bar', data: { labels, datasets: [{ label: 'Média de Brocamento (%)', data: medias, backgroundColor: '#4caf50' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
                 this._createOrUpdateChart('graficoBrocamentoPizza', { type: 'pie', data: { labels, datasets: [{ data: medias, backgroundColor: ['#4caf50', '#2e7d32', '#388e3c', '#66bb6a', '#81c784'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { formatter: (v) => v + '%', color: '#fff' } } }, plugins: [ChartDataLabels] });
                 const dadosPorData = App.state.registros.reduce((acc, reg) => { acc[reg.data] = acc[reg.data] || []; acc[reg.data].push(parseFloat(reg.brocamento.replace(',', '.'))); return acc; }, {});
@@ -2009,8 +2211,14 @@
                 this._createOrUpdateChart('graficoBrocamentoLinha', { type: 'line', data: { labels: datas, datasets: [{ label: 'Evolução do Brocamento (%)', data: mediasPorData, borderColor: '#4caf50', tension: 0.1, fill: true }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
             },
             renderPerdaCharts() {
-                const dadosPorFazenda = App.state.perdas.reduce((acc, p) => { acc[p.fazenda] = acc[p.fazenda] || []; acc[p.fazenda].push(p.total); return acc; }, {});
-                const labels = Object.keys(dadosPorFazenda); const medias = labels.map(f => (dadosPorFazenda[f].reduce((a,b)=>a+b,0) / dadosPorFazenda[f].length).toFixed(2));
+                const dadosPorFazenda = App.state.perdas.reduce((acc, p) => { 
+                    const fazendaKey = `${p.codigo} - ${p.fazenda}`;
+                    acc[fazendaKey] = acc[fazendaKey] || []; 
+                    acc[fazendaKey].push(p.total); 
+                    return acc; 
+                }, {});
+                const labels = Object.keys(dadosPorFazenda).sort((a,b) => parseInt(a) - parseInt(b)); 
+                const medias = labels.map(f => (dadosPorFazenda[f].reduce((a,b)=>a+b,0) / dadosPorFazenda[f].length).toFixed(2));
                 this._createOrUpdateChart('graficoPerda', { type: 'bar', data: { labels, datasets: [{ label: 'Média de Perda (Total)', data: medias, backgroundColor: '#388e3c' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
                 const tiposPerda = ['canaInteira', 'tolete', 'toco', 'ponta', 'estilhaco', 'pedaco']; const labelsPerda = ['Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço'];
                 const dadosPerda = tiposPerda.map(tipo => App.state.perdas.reduce((sum, p) => sum + p[tipo], 0));
@@ -2057,7 +2265,7 @@
                 }
                 const data = dataToExport || this._getFilteredData(App.state.registros, App.elements.broca);
                 const headers = [['Fazenda', 'Talhão', 'Data', 'Entrenós', 'Brocado', 'Brocamento (%)']];
-                const body = data.map(r => [r.fazenda, r.talhao, r.data, r.entrenos, r.brocado, r.brocamento]);
+                const body = data.map(r => [`${r.codigo} - ${r.fazenda}`, r.talhao, r.data, r.entrenos, r.brocado, r.brocamento]);
                 this._generatePDF(title, headers, body);
             },
             generateBrocamentoCSV(dataToExport = null, title = 'relatorio_brocamento.csv') {
@@ -2068,7 +2276,7 @@
                 }
                 const data = dataToExport || this._getFilteredData(App.state.registros, App.elements.broca);
                 const headers = ['Fazenda', 'Talhão', 'Data', 'Entrenós', 'Brocado', 'Brocamento (%)'];
-                const body = data.map(r => [r.fazenda, r.talhao, r.data, r.entrenos, r.brocado, r.brocamento]);
+                const body = data.map(r => [`${r.codigo} - ${r.fazenda}`, r.talhao, r.data, r.entrenos, r.brocado, r.brocamento]);
                 this._generateCSV(title, headers, body);
             },
             generatePerdaPDF(dataToExport = null, title = null) {
@@ -2081,7 +2289,12 @@
                 const isDetailed = App.elements.perda.tipoRelatorio.value === 'B';
                 const finalTitle = title || (isDetailed ? 'Relatorio_Perda_Detalhado' : 'Relatorio_Perda_Resumido');
                 const headers = isDetailed ? [['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média']] : [['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Total', 'Média']];
-                const body = data.map(p => isDetailed ? [p.fazenda, p.talhao, p.data, p.frenteServico, p.turno, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media] : [p.fazenda, p.talhao, p.data, p.frenteServico, p.turno, p.total, p.media]);
+                const body = data.map(p => {
+                    const fazendaDisplay = `${p.codigo} - ${p.fazenda}`;
+                    return isDetailed 
+                        ? [fazendaDisplay, p.talhao, p.data, p.frenteServico, p.turno, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media] 
+                        : [fazendaDisplay, p.talhao, p.data, p.frenteServico, p.turno, p.total, p.media]
+                });
                 this._generatePDF(finalTitle, headers, body);
             },
             generatePerdaCSV(dataToExport = null, title = 'relatorio_perda.csv') {
@@ -2092,7 +2305,7 @@
                 }
                 const data = dataToExport || this._getFilteredData(App.state.perdas, App.elements.perda);
                 const headers = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média'];
-                const body = data.map(p => [p.fazenda, p.talhao, p.data, p.frenteServico, p.turno, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media]);
+                const body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media]);
                 this._generateCSV(title, headers, body);
             },
             generateHarvestPlanPDF(planId = null) {
@@ -2137,7 +2350,7 @@
                         const idadeMediaMeses = App.actions.calculateAverageAge(group, plan.startDate);
 
                         body.push([
-                            index + 1, group.fazendaName, group.plots.map(p => p.talhaoName).join(', '),
+                            index + 1, `${group.fazendaCodigo} - ${group.fazendaName}`, group.plots.map(p => p.talhaoName).join(', '),
                             group.totalArea.toFixed(2), group.totalProducao.toFixed(2), group.atr,
                             idadeMediaMeses, dataEntrada.toLocaleDateString('pt-BR'), dataSaida.toLocaleDateString('pt-BR')
                         ]);
@@ -2207,7 +2420,7 @@
                         const idadeMediaMeses = App.actions.calculateAverageAge(group, plan.startDate);
 
                         body.push([
-                            plan.frontName, index + 1, group.fazendaName,
+                            plan.frontName, index + 1, `${group.fazendaCodigo} - ${group.fazendaName}`,
                             group.plots.map(p => p.talhaoName).join('; '),
                             group.totalArea.toFixed(2), group.totalProducao.toFixed(2),
                             group.atr, idadeMediaMeses, dataEntrada.toLocaleDateString('pt-BR'),
