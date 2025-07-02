@@ -304,7 +304,7 @@
     #harvest-plans-list .plano-card { border-left-color: var(--color-success); }
     .editable-atr { cursor: pointer; background-color: #eef7ee; padding: 2px 6px; border-radius: 6px; font-weight: 500;}
     .editable-atr:hover { background-color: #d8f0d8; }
-    #varietyDisplay { font-size: 14px; color: var(--color-primary); font-weight: 500; height: 20px; margin-top: 5px;}
+    .info-display { font-size: 14px; color: var(--color-primary); font-weight: 500; height: 20px; margin-top: 5px;}
     .upload-area { border: 2px dashed var(--color-border); border-radius: var(--border-radius); padding: 20px; text-align: center; cursor: pointer; transition: var(--transition); }
     .upload-area:hover { border-color: var(--color-primary); background-color: #f8f9fa; }
     
@@ -596,7 +596,7 @@
                 <div class="form-col">
                     <label for="codigo" class="required">Código da Fazenda:</label>
                     <input type="number" id="codigo" aria-describedby="fazendaNome" placeholder="Selecione ou digite o código" required />
-                    <div id="fazendaNome" aria-live="polite"></div>
+                    <div id="fazendaNome" class="info-display"></div>
                 </div>
                 <div class="form-col">
                     <label for="data" class="required">Data da Inspeção:</label>
@@ -607,7 +607,7 @@
                 <div class="form-col">
                      <label for="talhao" class="required">Talhão:</label>
                      <input type="text" id="talhao" placeholder="Ex: T12, T15-A" required />
-                     <div id="varietyDisplay"></div>
+                     <div id="varietyDisplay" class="info-display"></div>
                 </div>
                  <div class="form-col">
                     <label for="entrenos" class="required">Entrenós Contados:</label>
@@ -646,22 +646,25 @@
             <h2><i class="fas fa-dollar-sign"></i> Lançamento Perda</h2>
             <div class="form-row">
                 <div class="form-col"><label for="dataPerda" class="required">Data:</label><input type="date" id="dataPerda" required /></div>
-                <div class="form-col"><label for="codigoPerda" class="required">Código da Fazenda:</label><input type="number" id="codigoPerda" aria-describedby="fazendaNomePerda" placeholder="Selecione ou digite o código" required /><div id="fazendaNomePerda" aria-live="polite"></div></div>
+                <div class="form-col"><label for="codigoPerda" class="required">Código da Fazenda:</label><input type="number" id="codigoPerda" aria-describedby="fazendaNomePerda" placeholder="Selecione ou digite o código" required /><div id="fazendaNomePerda" class="info-display"></div></div>
             </div>
             <div class="form-row">
-                <div class="form-col"><label for="talhaoPerda" class="required">Talhão:</label><input type="text" id="talhaoPerda" placeholder="Ex: T12, T15-A" required /></div>
+                <div class="form-col"><label for="talhaoPerda" class="required">Talhão:</label><input type="text" id="talhaoPerda" placeholder="Ex: T12, T15-A" required /><div id="varietyDisplayPerda" class="info-display"></div></div>
                 <div class="form-col"><label for="frenteServico" class="required">Frente de Serviço:</label><input type="text" id="frenteServico" placeholder="Ex: Frente 1" required /></div>
                 <div class="form-col"><label for="turno" class="required">Turno:</label><select id="turno" required><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
             </div>
             <div class="form-row">
+                <div class="form-col"><label for="frotaEquipamento" class="required">Frota do Equipamento:</label><input type="text" id="frotaEquipamento" placeholder="Ex: 7501" required /></div>
+                <div class="form-col"><label for="matriculaOperador" class="required">Matrícula do Operador:</label><input type="number" id="matriculaOperador" placeholder="Digite a matrícula" required /><div id="operadorNome" class="info-display"></div></div>
+            </div>
+            <h3>Tipos de Perda (kg)</h3>
+            <div class="form-row">
                 <div class="form-col"><label for="canaInteira">Cana Inteira:</label><input type="number" id="canaInteira" min="0" placeholder="0" /></div>
                 <div class="form-col"><label for="tolete">Tolete:</label><input type="number" id="tolete" min="0" placeholder="0" /></div>
-            </div>
-            <div class="form-row">
                 <div class="form-col"><label for="toco">Toco:</label><input type="number" id="toco" min="0" placeholder="0" /></div>
-                <div class="form-col"><label for="ponta">Ponta:</label><input type="number" id="ponta" min="0" placeholder="0" /></div>
             </div>
             <div class="form-row">
+                <div class="form-col"><label for="ponta">Ponta:</label><input type="number" id="ponta" min="0" placeholder="0" /></div>
                 <div class="form-col"><label for="estilhaco">Estilhaço:</label><input type="number" id="estilhaco" min="0" placeholder="0" /></div>
                 <div class="form-col"><label for="pedaco">Pedaço:</label><input type="number" id="pedaco" min="0" placeholder="0" /></div>
             </div>
@@ -674,7 +677,7 @@
             <div class="form-row">
                 <div class="form-col"><label for="fazendaFiltroPerda">Filtrar por Fazenda:</label><select id="fazendaFiltroPerda"><option value="">Todas</option></select></div>
                 <div class="form-col"><label for="talhaoFiltroPerda">Filtrar por Talhão:</label><input type="text" id="talhaoFiltroPerda" placeholder="Digite Talhão" /></div>
-                <div class="form-col"><label for="turnoFiltroPerda">Filtrar por Turno:</label><select id="turnoFiltroPerda"><option value="">Todos</option><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
+                <div class="form-col"><label for="operadorFiltroPerda">Filtrar por Operador:</label><select id="operadorFiltroPerda"><option value="">Todos</option></select></div>
             </div>
             <div class="form-row">
                 <div class="form-col"><label for="frenteFiltroPerda">Filtrar por Frente de Serviço:</label><input type="text" id="frenteFiltroPerda" placeholder="Digite Frente de Serviço" /></div>
@@ -761,11 +764,27 @@
                     <label class="permission-item"><input type="checkbox" id="permExcluir" /> <i class="fas fa-trash"></i> Excluir Dados</label>
                     <label class="permission-item"><input type="checkbox" id="permGerenciarUsuarios" /> <i class="fas fa-users-cog"></i> Gerir Utilizadores</label>
                     <label class="permission-item"><input type="checkbox" id="permConfiguracoes" /> <i class="fas fa-cog"></i> Cadastros</label>
+                    <label class="permission-item"><input type="checkbox" id="permCadastrarPessoas" /> <i class="fas fa-id-card"></i> Cadastrar Pessoas</label>
                 </div>
             </fieldset>
             <button class="save" id="btnCreateUser" style="max-width: 250px; margin-top: 25px;"><i class="fas fa-user-plus"></i> Criar Utilizador</button>
             <h3><i class="fas fa-users"></i> Utilizadores Cadastrados</h3>
             <div id="usersList" style="margin-top: 15px;"></div>
+        </section>
+
+        <section id="cadastrarPessoas" class="tab-content card" aria-label="Cadastrar Pessoas" tabindex="0" hidden>
+            <h2><i class="fas fa-id-card"></i> Cadastro de Pessoas</h2>
+            <div class="card" style="border-left-color: var(--color-info);">
+                <h3><i class="fas fa-user-plus"></i> Adicionar/Editar Pessoa</h3>
+                <input type="hidden" id="personnelId">
+                <div class="form-row">
+                    <div class="form-col"><label for="personnelMatricula" class="required">Matrícula:</label><input type="number" id="personnelMatricula" placeholder="Ex: 102030"></div>
+                    <div class="form-col"><label for="personnelName" class="required">Nome Completo:</label><input type="text" id="personnelName" placeholder="Ex: João da Silva"></div>
+                </div>
+                <button id="btnSavePersonnel" class="save" style="max-width: 250px;"><i class="fas fa-save"></i> Guardar Pessoa</button>
+            </div>
+             <h3><i class="fas fa-users"></i> Pessoas Cadastradas</h3>
+            <div id="personnelList" style="margin-top: 15px;"></div>
         </section>
 
     </main>
@@ -849,14 +868,15 @@
                     label: 'Administrativo', icon: 'fas fa-cogs', permission: 'gerenciarUsuarios',
                     submenu: [
                         { label: 'Cadastros', icon: 'fas fa-book', target: 'cadastros', permission: 'configuracoes' },
+                        { label: 'Cadastrar Pessoas', icon: 'fas fa-id-card', target: 'cadastrarPessoas', permission: 'cadastrarPessoas' },
                         { label: 'Gerir Utilizadores', icon: 'fas fa-users-cog', target: 'gerenciarUsuarios', permission: 'gerenciarUsuarios' },
                         { label: 'Excluir Lançamentos', icon: 'fas fa-trash', target: 'excluirDados', permission: 'excluir' },
                     ]
                 },
             ],
             roles: {
-                admin: { dashboard: true, planejamentoColheita: true, planejamento: true, lancamentoBroca: true, lancamentoPerda: true, relatorioBroca: true, relatorioPerda: true, excluir: true, gerenciarUsuarios: true, configuracoes: true },
-                supervisor: { dashboard: true, planejamentoColheita: true, planejamento: true, relatorioBroca: true, relatorioPerda: true, configuracoes: true },
+                admin: { dashboard: true, planejamentoColheita: true, planejamento: true, lancamentoBroca: true, lancamentoPerda: true, relatorioBroca: true, relatorioPerda: true, excluir: true, gerenciarUsuarios: true, configuracoes: true, cadastrarPessoas: true },
+                supervisor: { dashboard: true, planejamentoColheita: true, planejamento: true, relatorioBroca: true, relatorioPerda: true, configuracoes: true, cadastrarPessoas: true },
                 tecnico: { dashboard: true, lancamentoBroca: true, lancamentoPerda: true, relatorioBroca: true, relatorioPerda: true },
                 colaborador: { dashboard: true, lancamentoBroca: true, lancamentoPerda: true },
                 user: { dashboard: true }
@@ -865,7 +885,7 @@
 
         state: {
             currentUser: null, users: [], registros: [], perdas: [], planos: [], 
-            fazendas: [], activeSubmenu: null, charts: {},
+            fazendas: [], personnel: [], activeSubmenu: null, charts: {},
             harvestPlans: [],
             activeHarvestPlan: null 
         },
@@ -908,6 +928,13 @@
                 btnSaveChanges: document.getElementById('btnSaveUserChanges'),
                 btnResetPassword: document.getElementById('btnResetPassword'),
                 btnDeleteUser: document.getElementById('btnDeleteUser'),
+            },
+            personnel: {
+                id: document.getElementById('personnelId'),
+                matricula: document.getElementById('personnelMatricula'),
+                name: document.getElementById('personnelName'),
+                btnSave: document.getElementById('btnSavePersonnel'),
+                list: document.getElementById('personnelList'),
             },
             cadastros: {
                 farmCode: document.getElementById('farmCode'),
@@ -978,12 +1005,17 @@
             perda: {
                 data: document.getElementById('dataPerda'), codigo: document.getElementById('codigoPerda'),
                 fazendaNome: document.getElementById('fazendaNomePerda'), talhao: document.getElementById('talhaoPerda'),
+                varietyDisplay: document.getElementById('varietyDisplayPerda'),
                 frente: document.getElementById('frenteServico'), turno: document.getElementById('turno'),
+                frota: document.getElementById('frotaEquipamento'),
+                matricula: document.getElementById('matriculaOperador'),
+                operadorNome: document.getElementById('operadorNome'),
                 canaInteira: document.getElementById('canaInteira'), tolete: document.getElementById('tolete'),
                 toco: document.getElementById('toco'), ponta: document.getElementById('ponta'),
                 estilhaco: document.getElementById('estilhaco'), pedaco: document.getElementById('pedaco'),
                 resultado: document.getElementById('resultadoPerda'), btnSalvar: document.getElementById('btnSalvarPerda'),
                 filtroFazenda: document.getElementById('fazendaFiltroPerda'), filtroTalhao: document.getElementById('talhaoFiltroPerda'),
+                filtroOperador: document.getElementById('operadorFiltroPerda'),
                 filtroTurno: document.getElementById('turnoFiltroPerda'), filtroFrente: document.getElementById('frenteFiltroPerda'),
                 filtroInicio: document.getElementById('inicioPerda'), filtroFim: document.getElementById('fimPerda'),
                 tipoRelatorio: document.getElementById('tipoRelatorioPerda'), btnPDF: document.getElementById('btnPDFPerda'),
@@ -1116,13 +1148,15 @@
         },
 
         data: {
-            loadAll() { this.loadFazendas(); this.loadUsers(); this.loadPlanos(); this.loadHarvestPlans(); this.loadRegistros(); this.loadPerdas(); },
+            loadAll() { this.loadFazendas(); this.loadUsers(); this.loadPersonnel(); this.loadPlanos(); this.loadHarvestPlans(); this.loadRegistros(); this.loadPerdas(); },
             load(key, defaultValue = []) { try { return JSON.parse(localStorage.getItem(key)) || defaultValue; } catch (e) { return defaultValue; } },
             save(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) { console.error(`Erro ao guardar '${key}'`, e); } },
             loadFazendas() { App.state.fazendas = this.load('fazendas', [{code: '4012', name: "FAZ. LAGOA CERCADA", talhoes: [{id: 1, name: 'T-01', area: 50, producao: 4000, variedade: 'RB867515', corte: 2, distancia: 10, dataUltimaColheita: '2024-07-15'}, {id: 2, name: 'T-02', area: 35.5, producao: 3100, variedade: 'CTC4', corte: 3, distancia: 12, dataUltimaColheita: '2024-08-01'}, {id: 3, name: 'T-03A', area: 22, producao: 1950, variedade: 'RB966928', corte: 1, distancia: 11, dataUltimaColheita: '2024-06-20'}]}, {code: '4005', name: "FAZ. MAURO BORGES", talhoes: [{id: 34, name: 'T-MB-34', area: 2.84, producao: 227.2, variedade: 'RB988082', corte: 1, distancia: 25, dataUltimaColheita: '2024-05-10'}, {id: 35, name: 'T-MB-35', area: 3.1, producao: 250, variedade: 'RB988082', corte: 1, distancia: 26, dataUltimaColheita: '2024-05-15'}, {id: 36, name: 'T-MB-36', area: 5.2, producao: 450, variedade: 'RB988082', corte: 2, distancia: 27, dataUltimaColheita: '2024-05-20'}, {id: 4, name: 'T-MB-04', area: 10, producao: 900, variedade: 'CTC9001', corte: 4, distancia: 22, dataUltimaColheita: '2024-04-25'}, {id: 5, name: 'T-MB-05', area: 12, producao: 1100, variedade: 'CTC9001', corte: 4, distancia: 23, dataUltimaColheita: '2024-04-30'}, {id: 6, name: 'T-MB-06', area: 8, producao: 750, variedade: 'CTC9001', corte: 3, distancia: 24, dataUltimaColheita: '2024-06-05'}]}]); },
             saveFazendas() { this.save('fazendas', App.state.fazendas); },
             loadUsers() { App.state.users = this.load('users', []); },
             saveUsers() { this.save('users', App.state.users); },
+            loadPersonnel() { App.state.personnel = this.load('personnel', []); },
+            savePersonnel() { this.save('personnel', App.state.personnel); },
             loadPlanos() { App.state.planos = this.load('planos', []); },
             savePlanos() { this.save('planos', App.state.planos); },
             loadHarvestPlans() { App.state.harvestPlans = this.load('harvestPlans', []); },
@@ -1162,8 +1196,11 @@
                 }
             },
             renderAllDynamicContent() {
-                this.populateFazendaSelects(); this.populateUserSelects();
+                this.populateFazendaSelects(); 
+                this.populateUserSelects();
+                this.populateOperatorSelects();
                 this.renderUsersList();
+                this.renderPersonnelList();
                 this.renderPlanejamento();
                 this.showHarvestPlanList();
                 this.showTab('dashboard'); App.charts.renderAll();
@@ -1256,6 +1293,7 @@
                     if(id === 'excluirDados') this.renderExclusao();
                     if(id === 'gerenciarUsuarios') this.renderUsersList();
                     if(id === 'cadastros') this.renderFarmSelect();
+                    if(id === 'cadastrarPessoas') this.renderPersonnelList();
                     if(id === 'planejamento') this.renderPlanejamento();
                     if(id === 'planejamentoColheita') this.showHarvestPlanList();
                 }
@@ -1279,6 +1317,15 @@
                 App.state.users
                     .filter(u => u.role === 'tecnico' || u.role === 'colaborador' || u.role === 'supervisor')
                     .forEach(user => { select.innerHTML += `<option value="${user.username}">${user.username}</option>`; });
+            },
+            populateOperatorSelects() {
+                const select = App.elements.perda.filtroOperador;
+                select.innerHTML = '<option value="">Todos</option>';
+                App.state.personnel
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .forEach(p => {
+                        select.innerHTML += `<option value="${p.matricula}">${p.name}</option>`;
+                    });
             },
             renderFarmSelect() {
                 const { farmSelect } = App.elements.cadastros;
@@ -1390,6 +1437,31 @@
                 return `<div class="user-card"><div class="user-header"><div class="user-title">${user.username}<span class="user-role-badge" style="background: ${roleColor}; margin-left:10px; padding: 2px 8px; font-size: 12px; color: white; border-radius: 10px;">${roleName}</span></div><div class="user-status ${user.active ? '' : 'inactive'}" style="color: ${user.active ? 'var(--color-success)' : 'var(--color-danger)'}"><i class="fas fa-circle"></i> ${user.active ? 'Ativo' : 'Inativo'}</div></div><div class="user-actions" style="margin-top: 10px; display: flex; gap: 10px; justify-content: flex-end;">${buttonsHTML}</div></div>`;
             },
             renderUsersList() { const { list } = App.elements.users; list.innerHTML = App.state.users.map((u) => this._createUserCardHTML(u)).join(''); },
+            renderPersonnelList() {
+                const { list } = App.elements.personnel;
+                list.innerHTML = '';
+                if (App.state.personnel.length === 0) {
+                    list.innerHTML = '<p>Nenhuma pessoa cadastrada.</p>';
+                    return;
+                }
+                const table = document.createElement('table');
+                table.id = 'personnelTable';
+                table.className = 'harvestPlanTable'; // Re-use style
+                table.innerHTML = `<thead><tr><th>Matrícula</th><th>Nome</th><th>Ações</th></tr></thead><tbody></tbody>`;
+                const tbody = table.querySelector('tbody');
+                App.state.personnel.sort((a,b) => a.name.localeCompare(b.name)).forEach(p => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${p.matricula}</td>
+                        <td>${p.name}</td>
+                        <td>
+                            <button class="btn-excluir" style="background:var(--color-info)" data-action="edit-personnel" data-id="${p.id}"><i class="fas fa-edit"></i></button>
+                            <button class="btn-excluir" data-action="delete-personnel" data-id="${p.id}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                });
+                list.appendChild(table);
+            },
             renderExclusao() {
                 const { lista } = App.elements.exclusao; lista.innerHTML = ''; let content = '';
                 if (App.state.registros.length > 0) {
@@ -1620,6 +1692,17 @@
                 modalEls.btnResetPassword.addEventListener('click', () => App.auth.resetUserPassword(modalEls.editingUserId.value));
                 modalEls.btnDeleteUser.addEventListener('click', () => App.auth.deleteUser(modalEls.editingUserId.value));
                 modalEls.role.addEventListener('change', (e) => this.updatePermissionsForRole(e.target.value, '#editUserPermissionGrid'));
+                
+                // Personnel Listeners
+                App.elements.personnel.btnSave.addEventListener('click', () => App.actions.savePersonnel());
+                App.elements.personnel.list.addEventListener('click', e => {
+                    const btn = e.target.closest('button');
+                    if (!btn) return;
+                    const { action, id } = btn.dataset;
+                    if (action === 'edit-personnel') App.actions.editPersonnel(id);
+                    if (action === 'delete-personnel') App.actions.deletePersonnel(id);
+                });
+
 
                 App.elements.cadastros.btnSaveFarm.addEventListener('click', () => App.actions.saveFarm());
                 App.elements.cadastros.farmSelect.addEventListener('change', (e) => this.renderTalhaoList(e.target.value));
@@ -1668,8 +1751,8 @@
                 
                 // --- Broca Listeners ---
                 App.elements.broca.codigo.addEventListener('input', () => this.updateFazendaNome(App.elements.broca.codigo, App.elements.broca.fazendaNome));
-                App.elements.broca.talhao.addEventListener('input', () => App.actions.findVarietyForTalhao());
-                App.elements.broca.codigo.addEventListener('change', () => App.actions.findVarietyForTalhao());
+                App.elements.broca.talhao.addEventListener('input', () => App.actions.findVarietyForTalhao('broca'));
+                App.elements.broca.codigo.addEventListener('change', () => App.actions.findVarietyForTalhao('broca'));
                 ['entrenos', 'brocaBase', 'brocaMeio', 'brocaTopo'].forEach(id => document.getElementById(id).addEventListener('input', () => {
                     this.updateBrocadoTotal();
                     this.calculateBrocamento();
@@ -1678,6 +1761,9 @@
                 
                 // --- Perda Listeners ---
                 App.elements.perda.codigo.addEventListener('input', () => this.updateFazendaNome(App.elements.perda.codigo, App.elements.perda.fazendaNome));
+                App.elements.perda.talhao.addEventListener('input', () => App.actions.findVarietyForTalhao('perda'));
+                App.elements.perda.codigo.addEventListener('change', () => App.actions.findVarietyForTalhao('perda'));
+                App.elements.perda.matricula.addEventListener('blur', () => App.actions.findOperatorName());
                 ['canaInteira', 'tolete', 'toco', 'ponta', 'estilhaco', 'pedaco'].forEach(id => document.getElementById(id).addEventListener('input', () => this.calculatePerda()));
                 App.elements.perda.btnSalvar.addEventListener('click', () => App.actions.savePerda());
                 
@@ -1793,6 +1879,51 @@
                     App.ui.renderTalhaoList(farm.code);
                 }
             },
+            savePersonnel() {
+                const { id, matricula, name } = App.elements.personnel;
+                const matriculaValue = matricula.value.trim();
+                const nameValue = name.value.trim();
+                if (!matriculaValue || !nameValue) {
+                    App.ui.showAlert("Matrícula e Nome são obrigatórios.", "error");
+                    return;
+                }
+                const existingId = id.value;
+                if (existingId) {
+                    const person = App.state.personnel.find(p => p.id == existingId);
+                    if (person) {
+                        person.matricula = matriculaValue;
+                        person.name = nameValue;
+                    }
+                } else {
+                    if (App.state.personnel.some(p => p.matricula === matriculaValue)) {
+                        App.ui.showAlert("Esta matrícula já está cadastrada.", "error");
+                        return;
+                    }
+                    App.state.personnel.push({ id: Date.now(), matricula: matriculaValue, name: nameValue });
+                }
+                App.data.savePersonnel();
+                App.ui.renderPersonnelList();
+                App.ui.populateOperatorSelects();
+                id.value = ''; matricula.value = ''; name.value = '';
+            },
+            editPersonnel(personnelId) {
+                const { id, matricula, name } = App.elements.personnel;
+                const person = App.state.personnel.find(p => p.id == personnelId);
+                if (person) {
+                    id.value = person.id;
+                    matricula.value = person.matricula;
+                    name.value = person.name;
+                    matricula.focus();
+                }
+            },
+            deletePersonnel(personnelId) {
+                if (confirm("Tem certeza que deseja excluir esta pessoa?")) {
+                    App.state.personnel = App.state.personnel.filter(p => p.id != personnelId);
+                    App.data.savePersonnel();
+                    App.ui.renderPersonnelList();
+                    App.ui.populateOperatorSelects();
+                }
+            },
             agendarInspecao() {
                 const els = App.elements.planejamento;
                 const campos = { tipo: els.tipo.value, fazendaCodigo: els.fazenda.value, talhao: els.talhao.value.trim(), dataPrevista: els.data.value, usuarioResponsavel: els.responsavel.value };
@@ -1814,10 +1945,12 @@
                 const planoPendente = App.state.planos.find(p => p.status === 'Pendente' && p.tipo === tipo && p.fazendaCodigo === fazendaCodigo && p.talhao.toLowerCase() === talhao.toLowerCase());
                 if (planoPendente) { this.marcarPlanoComoConcluido(planoPendente.id); App.ui.showAlert(`Planeamento correspondente para ${talhao} foi concluído automaticamente.`, 'info'); }
             },
-            findVarietyForTalhao() {
-                const farmCode = App.elements.broca.codigo.value;
-                const talhaoName = App.elements.broca.talhao.value.trim().toUpperCase();
-                const display = App.elements.broca.varietyDisplay;
+            findVarietyForTalhao(section) {
+                const formElements = App.elements[section];
+                const farmCode = formElements.codigo.value;
+                const talhaoName = formElements.talhao.value.trim().toUpperCase();
+                const display = formElements.varietyDisplay;
+                
                 display.textContent = '';
                 if (!farmCode || !talhaoName) return;
 
@@ -1826,6 +1959,21 @@
 
                 if (talhao && talhao.variedade) {
                     display.textContent = `Variedade: ${talhao.variedade}`;
+                }
+            },
+            findOperatorName() {
+                const { matricula, operadorNome } = App.elements.perda;
+                const matriculaValue = matricula.value.trim();
+                operadorNome.textContent = '';
+                if (!matriculaValue) return;
+
+                const operator = App.state.personnel.find(p => p.matricula === matriculaValue);
+                if (operator) {
+                    operadorNome.textContent = operator.name;
+                    operadorNome.style.color = 'var(--color-primary)';
+                } else {
+                    operadorNome.textContent = 'Operador não encontrado';
+                    operadorNome.style.color = 'var(--color-danger)';
                 }
             },
             editHarvestPlan(planId = null) {
@@ -2053,14 +2201,34 @@
             },
             savePerda() {
                 const { perda } = App.elements;
-                if (!App.ui.validateFields(['dataPerda', 'codigoPerda', 'frenteServico', 'talhaoPerda'])) { App.ui.showAlert("Preencha todos os campos obrigatórios!", "error"); return; }
+                if (!App.ui.validateFields(['dataPerda', 'codigoPerda', 'frenteServico', 'talhaoPerda', 'frotaEquipamento', 'matriculaOperador'])) { App.ui.showAlert("Preencha todos os campos obrigatórios!", "error"); return; }
                 const farm = App.state.fazendas.find(f => f.code === perda.codigo.value.trim());
+                const operator = App.state.personnel.find(p => p.matricula === perda.matricula.value.trim());
+                if (!operator) {
+                    App.ui.showAlert("Matrícula do operador não encontrada. Verifique o cadastro.", "error");
+                    return;
+                }
                 const fields = { canaInteira: parseFloat(perda.canaInteira.value) || 0, tolete: parseFloat(perda.tolete.value) || 0, toco: parseFloat(perda.toco.value) || 0, ponta: parseFloat(perda.ponta.value) || 0, estilhaco: parseFloat(perda.estilhaco.value) || 0, pedaco: parseFloat(perda.pedaco.value) || 0 };
                 const total = Object.values(fields).reduce((s, v) => s + v, 0);
-                const newEntry = { ...fields, data: perda.data.value, codigo: perda.codigo.value.trim(), fazenda: farm ? farm.name : 'Desconhecida', frenteServico: perda.frente.value.trim(), turno: perda.turno.value, talhao: perda.talhao.value.trim(), total, media: (total / 6).toFixed(2).replace('.', ','), usuario: App.state.currentUser.username };
+                const newEntry = { 
+                    ...fields, 
+                    data: perda.data.value, 
+                    codigo: perda.codigo.value.trim(), 
+                    fazenda: farm ? farm.name : 'Desconhecida', 
+                    frenteServico: perda.frente.value.trim(), 
+                    turno: perda.turno.value, 
+                    talhao: perda.talhao.value.trim(), 
+                    frota: perda.frota.value.trim(),
+                    matricula: operator.matricula,
+                    operador: operator.name,
+                    total, 
+                    media: (total / 6).toFixed(2).replace('.', ','), 
+                    usuario: App.state.currentUser.username 
+                };
                 App.state.perdas.push(newEntry); App.data.savePerdas(); App.ui.showAlert('Lançamento de perda guardado com sucesso!');
-                ['dataPerda','codigoPerda','frenteServico','talhaoPerda', 'canaInteira', 'tolete', 'toco', 'ponta', 'estilhaco', 'pedaco'].forEach(id => document.getElementById(id).value = '');
-                perda.fazendaNome.textContent = ''; perda.resultado.textContent = ''; App.charts.renderAll();
+                ['dataPerda','codigoPerda','frenteServico','talhaoPerda', 'frotaEquipamento', 'matriculaOperador', 'canaInteira', 'tolete', 'toco', 'ponta', 'estilhaco', 'pedaco'].forEach(id => document.getElementById(id).value = '');
+                perda.fazendaNome.textContent = ''; perda.resultado.textContent = ''; perda.varietyDisplay.textContent = ''; perda.operadorNome.textContent = '';
+                App.charts.renderAll();
                 this.verificarEAtualizarPlano('perda', newEntry.codigo, newEntry.talhao);
             },
             deleteEntry(type, index) {
@@ -2232,8 +2400,22 @@
         reports: {
             _getFilteredData(sourceData, filterElements) {
                 let data = [...sourceData];
-                const filters = { fazenda: filterElements.filtroFazenda?.value, talhao: filterElements.filtroTalhao?.value, turno: filterElements.filtroTurno?.value, frente: filterElements.filtroFrente?.value, inicio: filterElements.filtroInicio?.value, fim: filterElements.filtroFim?.value, };
-                if(filters.fazenda) data = data.filter(d => d.codigo === filters.fazenda); if(filters.talhao) data = data.filter(d => d.talhao.toLowerCase().includes(filters.talhao.toLowerCase())); if(filters.turno) data = data.filter(d => d.turno === filters.turno); if(filters.frente) data = data.filter(d => d.frenteServico.toLowerCase().includes(filters.frente.toLowerCase())); if(filters.inicio) data = data.filter(d => d.data >= filters.inicio); if(filters.fim) data = data.filter(d => d.data <= filters.fim);
+                const filters = { 
+                    fazenda: filterElements.filtroFazenda?.value, 
+                    talhao: filterElements.filtroTalhao?.value, 
+                    turno: filterElements.filtroTurno?.value, 
+                    frente: filterElements.filtroFrente?.value, 
+                    operador: filterElements.filtroOperador?.value,
+                    inicio: filterElements.filtroInicio?.value, 
+                    fim: filterElements.filtroFim?.value, 
+                };
+                if(filters.fazenda) data = data.filter(d => d.codigo === filters.fazenda); 
+                if(filters.talhao) data = data.filter(d => d.talhao.toLowerCase().includes(filters.talhao.toLowerCase())); 
+                if(filters.turno) data = data.filter(d => d.turno === filters.turno); 
+                if(filters.frente) data = data.filter(d => d.frenteServico.toLowerCase().includes(filters.frente.toLowerCase())); 
+                if(filters.operador) data = data.filter(d => d.matricula === filters.operador);
+                if(filters.inicio) data = data.filter(d => d.data >= filters.inicio); 
+                if(filters.fim) data = data.filter(d => d.data <= filters.fim);
                 return data;
             },
             _generatePDF(title, headers, bodyData, options = {}) {
@@ -2288,12 +2470,15 @@
                 const data = dataToExport || this._getFilteredData(App.state.perdas, App.elements.perda); 
                 const isDetailed = App.elements.perda.tipoRelatorio.value === 'B';
                 const finalTitle = title || (isDetailed ? 'Relatorio_Perda_Detalhado' : 'Relatorio_Perda_Resumido');
-                const headers = isDetailed ? [['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média']] : [['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Total', 'Média']];
+                const baseHeaders = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Operador', 'Frota'];
+                const detailedHeaders = ['Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média'];
+                const headers = isDetailed ? [baseHeaders.concat(detailedHeaders)] : [baseHeaders.concat(['Total', 'Média'])];
+                
                 const body = data.map(p => {
                     const fazendaDisplay = `${p.codigo} - ${p.fazenda}`;
-                    return isDetailed 
-                        ? [fazendaDisplay, p.talhao, p.data, p.frenteServico, p.turno, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media] 
-                        : [fazendaDisplay, p.talhao, p.data, p.frenteServico, p.turno, p.total, p.media]
+                    const baseData = [fazendaDisplay, p.talhao, p.data, p.frenteServico, p.turno, p.operador, p.frota];
+                    const detailedData = [p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media];
+                    return isDetailed ? baseData.concat(detailedData) : baseData.concat([p.total, p.media]);
                 });
                 this._generatePDF(finalTitle, headers, body);
             },
@@ -2304,8 +2489,8 @@
                     return;
                 }
                 const data = dataToExport || this._getFilteredData(App.state.perdas, App.elements.perda);
-                const headers = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média'];
-                const body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media]);
+                const headers = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Operador', 'Frota', 'Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média'];
+                const body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.operador, p.frota, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media]);
                 this._generateCSV(title, headers, body);
             },
             generateHarvestPlanPDF(planId = null) {
