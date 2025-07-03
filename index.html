@@ -444,6 +444,9 @@
                 </div>
                 <div id="currentDateTime" class="user-menu-item"></div>
                 <hr>
+                <button id="changePasswordBtn" role="menuitem" class="user-menu-item">
+                    <i class="fas fa-key"></i> Alterar Senha
+                </button>
                 <button id="logoutBtn" role="menuitem" class="user-menu-item">
                     <i class="fas fa-sign-out-alt"></i> Sair
                 </button>
@@ -871,6 +874,32 @@
         </div>
     </div>
 
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2>Alterar Senha</h2>
+                <button id="changePasswordModalCloseBtn" class="modal-close-btn">&times;</button>
+            </div>
+            <div class="input-group">
+                <label for="currentPassword">Senha Atual:</label>
+                <input type="password" id="currentPassword" required>
+            </div>
+            <div class="input-group">
+                <label for="newPassword">Nova Senha:</label>
+                <input type="password" id="newPassword" required>
+            </div>
+            <div class="input-group">
+                <label for="confirmNewPassword">Confirmar Nova Senha:</label>
+                <input type="password" id="confirmNewPassword" required>
+            </div>
+            <div class="modal-footer">
+                <button id="changePasswordModalCancelBtn" class="btn-secondary">Cancelar</button>
+                <button id="changePasswordModalSaveBtn" class="save">Guardar Nova Senha</button>
+            </div>
+        </div>
+    </div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -885,6 +914,7 @@
         config: {
             appName: "Inspeção e Planejamento de Cana com IA",
             sessionKey: 'canaAppUserSession',
+            inactivityTimeout: 5 * 60 * 1000, // 5 minutes
             menuConfig: [
                 { label: 'Dashboard', icon: 'fas fa-tachometer-alt', target: 'dashboard', permission: 'dashboard' },
                 { label: 'Plan. Colheita', icon: 'fas fa-tractor', target: 'planejamentoColheita', permission: 'planejamentoColheita' },
@@ -927,7 +957,8 @@
             currentUser: null, users: [], registros: [], perdas: [], planos: [], 
             fazendas: [], personnel: [], companyLogo: null, activeSubmenu: null, charts: {},
             harvestPlans: [],
-            activeHarvestPlan: null 
+            activeHarvestPlan: null,
+            inactivityTimer: null,
         },
 
         elements: {
@@ -944,7 +975,8 @@
                 container: document.getElementById('user-menu-container'),
                 toggle: document.getElementById('user-menu-toggle'),
                 dropdown: document.getElementById('user-menu-dropdown'),
-                username: document.getElementById('userMenuUsername')
+                username: document.getElementById('userMenuUsername'),
+                changePasswordBtn: document.getElementById('changePasswordBtn'),
             },
             confirmationModal: {
                 overlay: document.getElementById('confirmationModal'),
@@ -953,6 +985,15 @@
                 confirmBtn: document.getElementById('confirmationModalConfirmBtn'),
                 cancelBtn: document.getElementById('confirmationModalCancelBtn'),
                 closeBtn: document.getElementById('confirmationModalCloseBtn'),
+            },
+            changePasswordModal: {
+                overlay: document.getElementById('changePasswordModal'),
+                closeBtn: document.getElementById('changePasswordModalCloseBtn'),
+                cancelBtn: document.getElementById('changePasswordModalCancelBtn'),
+                saveBtn: document.getElementById('changePasswordModalSaveBtn'),
+                currentPassword: document.getElementById('currentPassword'),
+                newPassword: document.getElementById('newPassword'),
+                confirmNewPassword: document.getElementById('confirmNewPassword'),
             },
             companyConfig: {
                 logoUploadArea: document.getElementById('logoUploadArea'),
@@ -1122,6 +1163,7 @@
             logout() { 
                 App.state.currentUser = null; 
                 localStorage.removeItem(App.config.sessionKey); // Clear session
+                clearTimeout(App.state.inactivityTimer); // Stop inactivity timer
                 App.ui.showLoginScreen(); 
             },
             createUser() {
@@ -1250,6 +1292,7 @@
                 setInterval(() => this.updateDateTime(), 60000);
                 this.renderMenu(); 
                 this.renderAllDynamicContent();
+                App.actions.resetInactivityTimer();
                 if (currentUser.username === 'admin' && App.auth._hashPassword('admin123') === currentUser.password) {
                     this.showAlert("Por segurança, altere a sua senha padrão.", "warning");
                 }
@@ -1804,6 +1847,14 @@
                 modalEls.btnDeleteUser.addEventListener('click', () => App.auth.deleteUser(modalEls.editingUserId.value));
                 modalEls.role.addEventListener('change', (e) => this.updatePermissionsForRole(e.target.value, '#editUserPermissionGrid'));
                 
+                // Change Password Modal Listeners
+                const cpModal = App.elements.changePasswordModal;
+                App.elements.userMenu.changePasswordBtn.addEventListener('click', () => cpModal.overlay.classList.add('show'));
+                cpModal.closeBtn.addEventListener('click', () => cpModal.overlay.classList.remove('show'));
+                cpModal.cancelBtn.addEventListener('click', () => cpModal.overlay.classList.remove('show'));
+                cpModal.saveBtn.addEventListener('click', () => App.actions.changePassword());
+
+
                 // Personnel Listeners
                 App.elements.personnel.btnSave.addEventListener('click', () => App.actions.savePersonnel());
                 App.elements.personnel.list.addEventListener('click', e => {
@@ -1911,10 +1962,52 @@
                         });
                     }
                 });
+
+                // --- Inactivity Timer Events ---
+                ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+                    document.addEventListener(event, () => App.actions.resetInactivityTimer());
+                });
             }
         },
 
         actions: {
+            resetInactivityTimer() {
+                clearTimeout(App.state.inactivityTimer);
+                if (App.state.currentUser) { // Only set timer if logged in
+                    App.state.inactivityTimer = setTimeout(() => {
+                        App.ui.showAlert('Sessão expirada por inatividade.', 'warning');
+                        App.auth.logout();
+                    }, App.config.inactivityTimeout);
+                }
+            },
+            changePassword() {
+                const els = App.elements.changePasswordModal;
+                const currentPassword = els.currentPassword.value;
+                const newPassword = els.newPassword.value;
+                const confirmNewPassword = els.confirmNewPassword.value;
+
+                if (!currentPassword || !newPassword || !confirmNewPassword) {
+                    App.ui.showAlert("Preencha todos os campos.", "error");
+                    return;
+                }
+                if (newPassword !== confirmNewPassword) {
+                    App.ui.showAlert("As novas senhas não coincidem.", "error");
+                    return;
+                }
+                const user = App.state.currentUser;
+                if (App.auth._hashPassword(currentPassword) !== user.password) {
+                    App.ui.showAlert("A senha atual está incorreta.", "error");
+                    return;
+                }
+
+                user.password = App.auth._hashPassword(newPassword);
+                App.data.saveUsers();
+                App.ui.showAlert("Senha alterada com sucesso!", "success");
+                els.overlay.classList.remove('show');
+                els.currentPassword.value = '';
+                els.newPassword.value = '';
+                els.confirmNewPassword.value = '';
+            },
             getAssignedTalhaoIds(editingGroupId = null) {
                 const assignedIds = new Set();
                 const currentPlanId = App.state.activeHarvestPlan ? App.state.activeHarvestPlan.id : null;
@@ -2605,6 +2698,7 @@
                     doc.setDrawColor(224, 224, 224);
                     doc.line(14, doc.internal.pageSize.getHeight() - 15, doc.internal.pageSize.getWidth() - 14, doc.internal.pageSize.getHeight() - 15);
                     doc.setFontSize(8);
+                    doc.text(`Relatório gerado por: ${App.state.currentUser.username}`, 14, doc.internal.pageSize.getHeight() - 10);
                     doc.text(`Página ${i} de ${pageCount}`, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
                 }
 
