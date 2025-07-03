@@ -102,13 +102,13 @@
     #user-menu-toggle {
         background: rgba(255, 255, 255, 0.1);
         color: var(--color-white);
-        padding: 8px 12px;
-        border-radius: var(--border-radius);
-        font-weight: 500;
+        padding: 8px;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 14px;
+        justify-content: center;
         border: 1px solid rgba(255,255,255,0.2);
         cursor: pointer;
         transition: var(--transition);
@@ -116,16 +116,13 @@
     #user-menu-toggle:hover, #user-menu-toggle.open {
         background: rgba(255, 255, 255, 0.2);
     }
-    #user-menu-toggle .fa-chevron-down {
-        transition: transform 0.2s ease;
-    }
-    #user-menu-toggle.open .fa-chevron-down {
-        transform: rotate(180deg);
+    #user-menu-toggle .fa-user-circle {
+        font-size: 20px;
     }
 
     #user-menu-dropdown {
         position: absolute;
-        top: calc(100% + 8px);
+        top: calc(100% + 12px);
         right: 0;
         background: var(--color-white);
         color: var(--color-text);
@@ -142,7 +139,7 @@
     }
     #user-menu-dropdown.show {
         opacity: 1;
-        transform: scale(1) translateY(0);
+        transform: translateY(0);
         pointer-events: auto;
     }
     .user-menu-header {
@@ -305,8 +302,9 @@
     .editable-atr { cursor: pointer; background-color: #eef7ee; padding: 2px 6px; border-radius: 6px; font-weight: 500;}
     .editable-atr:hover { background-color: #d8f0d8; }
     .info-display { font-size: 14px; color: var(--color-primary); font-weight: 500; height: 20px; margin-top: 5px;}
-    .upload-area { border: 2px dashed var(--color-border); border-radius: var(--border-radius); padding: 20px; text-align: center; cursor: pointer; transition: var(--transition); }
-    .upload-area:hover { border-color: var(--color-primary); background-color: #f8f9fa; }
+    .upload-area { border: 2px dashed var(--color-border); border-radius: var(--border-radius); padding: 2rem; text-align: center; cursor: pointer; transition: var(--transition); }
+    .upload-area:hover { border-color: var(--color-primary); background-color: var(--color-primary-light); }
+    #logoPreview { max-width: 150px; max-height: 80px; margin-top: 15px; border-radius: var(--border-radius); }
     
     .card-header-actions {
         display: flex;
@@ -378,13 +376,16 @@
         padding-top: 20px;
         border-top: 1px solid var(--color-border);
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         flex-wrap: wrap;
         gap: 15px;
     }
-    .modal-footer .danger-zone { display: flex; gap: 10px; }
+    .modal-footer .danger-zone { margin-right: auto; display: flex; gap: 10px; }
     .modal-footer button { margin-top: 0; }
+    #confirmationModal .modal-content { max-width: 450px; }
+    #confirmationModal p { color: var(--color-text-secondary); line-height: 1.6; }
+
 
     @media (max-width: 768px) {
         header h1 { font-size: 16px; max-width: calc(100% - 180px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -434,8 +435,7 @@
         
         <div id="user-menu-container" style="display:none;">
             <button id="user-menu-toggle" aria-label="Menu do Utilizador" aria-haspopup="true" aria-expanded="false">
-                <span id="userNameDisplay"></span>
-                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                <i class="fas fa-user-circle"></i>
             </button>
             <div id="user-menu-dropdown" role="menu">
                 <div class="user-menu-header">
@@ -795,6 +795,21 @@
              <h3><i class="fas fa-users"></i> Pessoas Cadastradas</h3>
             <div id="personnelList" style="margin-top: 15px;"></div>
         </section>
+        
+        <section id="configuracoesEmpresa" class="tab-content card" aria-label="Configurações da Empresa" tabindex="0" hidden>
+            <h2><i class="fas fa-building"></i> Configurações da Empresa</h2>
+            <div class="card" style="border-left-color: var(--color-purple);">
+                <h3><i class="fas fa-image"></i> Logotipo da Empresa</h3>
+                <p>Faça o upload do logotipo que aparecerá no cabeçalho dos relatórios. Use uma imagem com fundo transparente (PNG) para melhores resultados.</p>
+                <div class="upload-area" id="logoUploadArea">
+                    <i class="fas fa-upload fa-2x" style="color: var(--color-primary);"></i>
+                    <p>Clique ou arraste o logotipo aqui</p>
+                    <img id="logoPreview" src="#" alt="Pré-visualização do Logo" style="display: none;" />
+                </div>
+                <input type="file" id="logoInput" accept="image/png, image/jpeg" style="display: none;">
+                <button id="removeLogoBtn" class="btn-secondary" style="background: var(--color-danger); max-width: 200px; display: none;"><i class="fas fa-trash"></i> Remover Logo</button>
+            </div>
+        </section>
 
     </main>
 
@@ -840,6 +855,21 @@
             </div>
         </div>
     </div>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="confirmationModalTitle">Confirmar Ação</h2>
+                 <button id="confirmationModalCloseBtn" class="modal-close-btn">&times;</button>
+            </div>
+            <p id="confirmationModalMessage">Tem a certeza que deseja guardar este lançamento?</p>
+            <div class="modal-footer">
+                <button id="confirmationModalCancelBtn" class="btn-secondary">Cancelar</button>
+                <button id="confirmationModalConfirmBtn" class="save">Confirmar</button>
+            </div>
+        </div>
+    </div>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -879,6 +909,7 @@
                         { label: 'Cadastros', icon: 'fas fa-book', target: 'cadastros', permission: 'configuracoes' },
                         { label: 'Cadastrar Pessoas', icon: 'fas fa-id-card', target: 'cadastrarPessoas', permission: 'cadastrarPessoas' },
                         { label: 'Gerir Utilizadores', icon: 'fas fa-users-cog', target: 'gerenciarUsuarios', permission: 'gerenciarUsuarios' },
+                        { label: 'Configurações da Empresa', icon: 'fas fa-building', target: 'configuracoesEmpresa', permission: 'configuracoes' },
                         { label: 'Excluir Lançamentos', icon: 'fas fa-trash', target: 'excluirDados', permission: 'excluir' },
                     ]
                 },
@@ -894,7 +925,7 @@
 
         state: {
             currentUser: null, users: [], registros: [], perdas: [], planos: [], 
-            fazendas: [], personnel: [], activeSubmenu: null, charts: {},
+            fazendas: [], personnel: [], companyLogo: null, activeSubmenu: null, charts: {},
             harvestPlans: [],
             activeHarvestPlan: null 
         },
@@ -914,6 +945,20 @@
                 toggle: document.getElementById('user-menu-toggle'),
                 dropdown: document.getElementById('user-menu-dropdown'),
                 username: document.getElementById('userMenuUsername')
+            },
+            confirmationModal: {
+                overlay: document.getElementById('confirmationModal'),
+                title: document.getElementById('confirmationModalTitle'),
+                message: document.getElementById('confirmationModalMessage'),
+                confirmBtn: document.getElementById('confirmationModalConfirmBtn'),
+                cancelBtn: document.getElementById('confirmationModalCancelBtn'),
+                closeBtn: document.getElementById('confirmationModalCloseBtn'),
+            },
+            companyConfig: {
+                logoUploadArea: document.getElementById('logoUploadArea'),
+                logoInput: document.getElementById('logoInput'),
+                logoPreview: document.getElementById('logoPreview'),
+                removeLogoBtn: document.getElementById('removeLogoBtn'),
             },
             dashboard: {
                 btnAnalisar: document.getElementById('btnAnalisarDashboard'),
@@ -998,6 +1043,7 @@
                 summary: document.getElementById('harvestSummary'),
             },
             broca: {
+                form: document.getElementById('lancamentoBroca'),
                 codigo: document.getElementById('codigo'), fazendaNome: document.getElementById('fazendaNome'),
                 data: document.getElementById('data'), talhao: document.getElementById('talhao'),
                 varietyDisplay: document.getElementById('varietyDisplay'),
@@ -1014,6 +1060,7 @@
                 btnExcel: document.getElementById('btnExcelBrocamento'),
             },
             perda: {
+                form: document.getElementById('lancamentoPerda'),
                 data: document.getElementById('dataPerda'), codigo: document.getElementById('codigoPerda'),
                 fazendaNome: document.getElementById('fazendaNomePerda'), talhao: document.getElementById('talhaoPerda'),
                 varietyDisplay: document.getElementById('varietyDisplayPerda'),
@@ -1059,11 +1106,11 @@
                 }
             },
             login() {
-                const username = App.elements.loginUser.value.trim();
+                const username = App.elements.loginUser.value.trim().toUpperCase();
                 const password = App.elements.loginPass.value;
                 if (!username || !password) { App.ui.showLoginMessage("Preencha utilizador e senha."); return; }
                 const hashedPassword = this._hashPassword(password);
-                const user = App.state.users.find(u => u.username === username && u.password === hashedPassword);
+                const user = App.state.users.find(u => u.username.toUpperCase() === username && u.password === hashedPassword);
                 if (user && user.active) { 
                     App.state.currentUser = user; 
                     App.data.save(App.config.sessionKey, user); // Save session
@@ -1082,7 +1129,7 @@
                 const username = els.username.value.trim();
                 const password = els.password.value;
                 if (!username || !password) { App.ui.showAlert("Preencha utilizador e senha.", "error"); return; }
-                if (App.state.users.some(u => u.username === username)) { App.ui.showAlert("Nome de utilizador já existe.", "error"); return; }
+                if (App.state.users.some(u => u.username.toUpperCase() === username.toUpperCase())) { App.ui.showAlert("Nome de utilizador já existe.", "error"); return; }
                 const permissions = {};
                 els.permissionCheckboxes.forEach(cb => { permissions[cb.id.replace('perm', '').toLowerCase()] = cb.checked; });
                 const newUser = { id: Date.now(), username, password: this._hashPassword(password), role: els.role.value, active: true, permissions };
@@ -1159,7 +1206,7 @@
         },
 
         data: {
-            loadAll() { this.loadFazendas(); this.loadUsers(); this.loadPersonnel(); this.loadPlanos(); this.loadHarvestPlans(); this.loadRegistros(); this.loadPerdas(); },
+            loadAll() { this.loadFazendas(); this.loadUsers(); this.loadPersonnel(); this.loadLogo(); this.loadPlanos(); this.loadHarvestPlans(); this.loadRegistros(); this.loadPerdas(); },
             load(key, defaultValue = []) { try { return JSON.parse(localStorage.getItem(key)) || defaultValue; } catch (e) { return defaultValue; } },
             save(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) { console.error(`Erro ao guardar '${key}'`, e); } },
             loadFazendas() { App.state.fazendas = this.load('fazendas', [{code: '4012', name: "FAZ. LAGOA CERCADA", talhoes: [{id: 1, name: 'T-01', area: 50, producao: 4000, variedade: 'RB867515', corte: 2, distancia: 10, dataUltimaColheita: '2024-07-15'}, {id: 2, name: 'T-02', area: 35.5, producao: 3100, variedade: 'CTC4', corte: 3, distancia: 12, dataUltimaColheita: '2024-08-01'}, {id: 3, name: 'T-03A', area: 22, producao: 1950, variedade: 'RB966928', corte: 1, distancia: 11, dataUltimaColheita: '2024-06-20'}]}, {code: '4005', name: "FAZ. MAURO BORGES", talhoes: [{id: 34, name: 'T-MB-34', area: 2.84, producao: 227.2, variedade: 'RB988082', corte: 1, distancia: 25, dataUltimaColheita: '2024-05-10'}, {id: 35, name: 'T-MB-35', area: 3.1, producao: 250, variedade: 'RB988082', corte: 1, distancia: 26, dataUltimaColheita: '2024-05-15'}, {id: 36, name: 'T-MB-36', area: 5.2, producao: 450, variedade: 'RB988082', corte: 2, distancia: 27, dataUltimaColheita: '2024-05-20'}, {id: 4, name: 'T-MB-04', area: 10, producao: 900, variedade: 'CTC9001', corte: 4, distancia: 22, dataUltimaColheita: '2024-04-25'}, {id: 5, name: 'T-MB-05', area: 12, producao: 1100, variedade: 'CTC9001', corte: 4, distancia: 23, dataUltimaColheita: '2024-04-30'}, {id: 6, name: 'T-MB-06', area: 8, producao: 750, variedade: 'CTC9001', corte: 3, distancia: 24, dataUltimaColheita: '2024-06-05'}]}]); },
@@ -1168,6 +1215,8 @@
             saveUsers() { this.save('users', App.state.users); },
             loadPersonnel() { App.state.personnel = this.load('personnel', []); },
             savePersonnel() { this.save('personnel', App.state.personnel); },
+            loadLogo() { App.state.companyLogo = this.load('companyLogo', null); },
+            saveLogo() { this.save('companyLogo', App.state.companyLogo); },
             loadPlanos() { App.state.planos = this.load('planos', []); },
             savePlanos() { this.save('planos', App.state.planos); },
             loadHarvestPlans() { App.state.harvestPlans = this.load('harvestPlans', []); },
@@ -1196,7 +1245,6 @@
                 App.elements.loginScreen.style.display = 'none'; 
                 App.elements.appScreen.style.display = 'flex';
                 App.elements.userMenu.container.style.display = 'block';
-                App.elements.userNameDisplay.textContent = currentUser.username;
                 App.elements.userMenu.username.textContent = currentUser.username;
                 this.updateDateTime(); 
                 setInterval(() => this.updateDateTime(), 60000);
@@ -1212,6 +1260,7 @@
                 this.populateOperatorSelects();
                 this.renderUsersList();
                 this.renderPersonnelList();
+                this.renderLogoPreview();
                 this.renderPlanejamento();
                 this.showHarvestPlanList();
                 this.showTab('dashboard'); App.charts.renderAll();
@@ -1307,8 +1356,25 @@
                     if(id === 'cadastrarPessoas') this.renderPersonnelList();
                     if(id === 'planejamento') this.renderPlanejamento();
                     if(id === 'planejamentoColheita') this.showHarvestPlanList();
+                    if(id === 'lancamentoBroca') this.clearForm(App.elements.broca.form);
+                    if(id === 'lancamentoPerda') this.clearForm(App.elements.perda.form);
                 }
                 this.closeAllMenus();
+            },
+            clearForm(formElement) {
+                if (!formElement) return;
+                const inputs = formElement.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    if (input.type === 'checkbox' || input.type === 'radio') {
+                        input.checked = false;
+                    } else if (input.type === 'number' && (input.id === 'brocaBase' || input.id === 'brocaMeio' || input.id === 'brocaTopo')) {
+                        input.value = '0';
+                    } else {
+                        input.value = '';
+                    }
+                });
+                formElement.querySelectorAll('.info-display').forEach(el => el.textContent = '');
+                formElement.querySelectorAll('.resultado').forEach(el => el.textContent = '');
             },
             populateFazendaSelects() {
                 const selects = [App.elements.broca.filtroFazenda, App.elements.perda.filtroFazenda, App.elements.planejamento.fazenda, App.elements.harvest.fazenda, App.elements.cadastros.farmSelect];
@@ -1380,7 +1446,7 @@
                         </td>
                     `;
                 });
-                list.appendChild(table);
+                talhaoList.appendChild(table);
             },
             renderHarvestTalhaoSelection(farmCode, plotIdsToCheck = []) {
                 const { talhaoSelectionList, editingGroupId } = App.elements.harvest;
@@ -1472,6 +1538,17 @@
                     `;
                 });
                 list.appendChild(table);
+            },
+            renderLogoPreview() {
+                const { logoPreview, removeLogoBtn } = App.elements.companyConfig;
+                if (App.state.companyLogo) {
+                    logoPreview.src = App.state.companyLogo;
+                    logoPreview.style.display = 'block';
+                    removeLogoBtn.style.display = 'inline-flex';
+                } else {
+                    logoPreview.style.display = 'none';
+                    removeLogoBtn.style.display = 'none';
+                }
             },
             renderExclusao() {
                 const { lista } = App.elements.exclusao; lista.innerHTML = ''; let content = '';
@@ -1624,6 +1701,26 @@
                 const total = fields.reduce((sum, id) => sum + (parseFloat(document.getElementById(id).value) || 0), 0);
                 App.elements.perda.resultado.textContent = `Total Perda: ${total.toFixed(2).replace('.', ',')}`;
             },
+            showConfirmationModal(message, onConfirm) {
+                const { overlay, message: msgEl, confirmBtn, cancelBtn, closeBtn } = App.elements.confirmationModal;
+                msgEl.textContent = message;
+
+                const confirmHandler = () => {
+                    onConfirm();
+                    closeHandler();
+                };
+                const closeHandler = () => {
+                    overlay.classList.remove('show');
+                    confirmBtn.removeEventListener('click', confirmHandler);
+                    cancelBtn.removeEventListener('click', closeHandler);
+                    closeBtn.removeEventListener('click', closeHandler);
+                };
+
+                confirmBtn.addEventListener('click', confirmHandler);
+                cancelBtn.addEventListener('click', closeHandler);
+                closeBtn.addEventListener('click', closeHandler);
+                overlay.classList.add('show');
+            },
             openUserEditModal(userId) {
                 const modalEls = App.elements.userEditModal;
                 const user = App.state.users.find(u => u.id == userId);
@@ -1652,6 +1749,9 @@
                 App.elements.userEditModal.overlay.classList.remove('show');
             },
             setupEventListeners() {
+                App.elements.loginUser.addEventListener('input', e => {
+                    e.target.value = e.target.value.toUpperCase();
+                });
                 App.elements.btnLogin.addEventListener('click', () => App.auth.login());
                 App.elements.loginPass.addEventListener('keypress', e => e.key === 'Enter' && App.auth.login());
                 App.elements.logoutBtn.addEventListener('click', () => App.auth.logout());
@@ -1713,6 +1813,11 @@
                     if (action === 'edit-personnel') App.actions.editPersonnel(id);
                     if (action === 'delete-personnel') App.actions.deletePersonnel(id);
                 });
+                
+                // Company Config Listeners
+                App.elements.companyConfig.logoUploadArea.addEventListener('click', () => App.elements.companyConfig.logoInput.click());
+                App.elements.companyConfig.logoInput.addEventListener('change', (e) => App.actions.handleLogoUpload(e));
+                App.elements.companyConfig.removeLogoBtn.addEventListener('click', () => App.actions.removeLogo());
 
 
                 App.elements.cadastros.btnSaveFarm.addEventListener('click', () => App.actions.saveFarm());
@@ -1784,6 +1889,28 @@
                 App.elements.perda.btnPDF.addEventListener('click', () => App.reports.generatePerdaPDF());
                 App.elements.perda.btnExcel.addEventListener('click', () => App.reports.generatePerdaCSV());
                 App.elements.exclusao.lista.addEventListener('click', e => { const button = e.target.closest('button.btn-excluir'); if (button) App.actions.deleteEntry(button.dataset.type, button.dataset.index); });
+            
+                // --- Enter Key Navigation ---
+                const formsToNavigate = ['#lancamentoBroca', '#lancamentoPerda'];
+                formsToNavigate.forEach(formSelector => {
+                    const form = document.querySelector(formSelector);
+                    if (form) {
+                        form.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') {
+                                e.preventDefault();
+                                const fields = Array.from(form.querySelectorAll('input:not([readonly]):not([disabled]), select:not([disabled]), textarea:not([disabled])'));
+                                const currentIndex = fields.indexOf(e.target);
+                                const nextField = fields[currentIndex + 1];
+                                if (nextField) {
+                                    nextField.focus();
+                                } else {
+                                     // Optionally focus the save button at the end
+                                     form.querySelector('.save')?.focus();
+                                }
+                            }
+                        });
+                    }
+                });
             }
         },
 
@@ -1933,6 +2060,27 @@
                     App.data.savePersonnel();
                     App.ui.renderPersonnelList();
                     App.ui.populateOperatorSelects();
+                }
+            },
+            handleLogoUpload(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    App.state.companyLogo = event.target.result;
+                    App.data.saveLogo();
+                    App.ui.renderLogoPreview();
+                    App.ui.showAlert('Logo carregado com sucesso!');
+                };
+                reader.readAsDataURL(file);
+            },
+            removeLogo() {
+                if (confirm("Tem certeza que deseja remover o logotipo?")) {
+                    App.state.companyLogo = null;
+                    App.data.saveLogo();
+                    App.ui.renderLogoPreview();
+                    App.elements.companyConfig.logoInput.value = ''; // Reset file input
                 }
             },
             agendarInspecao() {
@@ -2187,64 +2335,65 @@
                 return 'N/A';
             },
             saveBrocamento() {
-                const { broca } = App.elements;
                 if (!App.ui.validateFields(['codigo', 'data', 'talhao', 'entrenos', 'brocaBase', 'brocaMeio', 'brocaTopo'])) { App.ui.showAlert("Preencha todos os campos obrigatórios!", "error"); return; }
-                const farm = App.state.fazendas.find(f => f.code === broca.codigo.value.trim());
-                if (!farm) { App.ui.showAlert("Fazenda não encontrada.", "error"); return; }
-                const talhao = farm.talhoes.find(t => t.name.toUpperCase() === broca.talhao.value.trim().toUpperCase());
+                
+                App.ui.showConfirmationModal('Tem a certeza que deseja guardar esta inspeção de broca?', () => {
+                    const { broca } = App.elements;
+                    const farm = App.state.fazendas.find(f => f.code === broca.codigo.value.trim());
+                    if (!farm) { App.ui.showAlert("Fazenda não encontrada.", "error"); return; }
+                    const talhao = farm.talhoes.find(t => t.name.toUpperCase() === broca.talhao.value.trim().toUpperCase());
 
-                const newEntry = {
-                    codigo: broca.codigo.value.trim(), fazenda: farm.name, data: broca.data.value,
-                    talhao: broca.talhao.value.trim(), 
-                    corte: talhao ? talhao.corte : null,
-                    entrenos: parseInt(broca.entrenos.value), 
-                    base: parseInt(broca.base.value),
-                    meio: parseInt(broca.meio.value),
-                    topo: parseInt(broca.topo.value),
-                    brocado: parseInt(broca.brocado.value),
-                    brocamento: (((parseInt(broca.brocado.value) || 0) / (parseInt(broca.entrenos.value) || 1)) * 100).toFixed(2).replace('.', ','),
-                    usuario: App.state.currentUser.username
-                };
-                App.state.registros.push(newEntry); App.data.saveRegistros(); App.ui.showAlert('Inspeção guardada com sucesso!');
-                ['codigo','data','talhao','entrenos','brocaBase', 'brocaMeio', 'brocaTopo', 'brocado'].forEach(id => document.getElementById(id).value = '');
-                document.getElementById('brocaBase').value = 0;
-                document.getElementById('brocaMeio').value = 0;
-                document.getElementById('brocaTopo').value = 0;
-                broca.fazendaNome.textContent = ''; broca.resultado.textContent = ''; broca.varietyDisplay.textContent = '';
-                App.charts.renderAll();
-                this.verificarEAtualizarPlano('broca', newEntry.codigo, newEntry.talhao);
+                    const newEntry = {
+                        codigo: broca.codigo.value.trim(), fazenda: farm.name, data: broca.data.value,
+                        talhao: broca.talhao.value.trim(), 
+                        corte: talhao ? talhao.corte : null,
+                        entrenos: parseInt(broca.entrenos.value), 
+                        base: parseInt(broca.base.value),
+                        meio: parseInt(broca.meio.value),
+                        topo: parseInt(broca.topo.value),
+                        brocado: parseInt(broca.brocado.value),
+                        brocamento: (((parseInt(broca.brocado.value) || 0) / (parseInt(broca.entrenos.value) || 1)) * 100).toFixed(2).replace('.', ','),
+                        usuario: App.state.currentUser.username
+                    };
+                    App.state.registros.push(newEntry); App.data.saveRegistros(); App.ui.showAlert('Inspeção guardada com sucesso!');
+                    App.ui.clearForm(broca.form);
+                    App.charts.renderAll();
+                    this.verificarEAtualizarPlano('broca', newEntry.codigo, newEntry.talhao);
+                });
             },
             savePerda() {
-                const { perda } = App.elements;
                 if (!App.ui.validateFields(['dataPerda', 'codigoPerda', 'frenteServico', 'talhaoPerda', 'frotaEquipamento', 'matriculaOperador'])) { App.ui.showAlert("Preencha todos os campos obrigatórios!", "error"); return; }
-                const farm = App.state.fazendas.find(f => f.code === perda.codigo.value.trim());
-                const operator = App.state.personnel.find(p => p.matricula === perda.matricula.value.trim());
-                if (!operator) {
-                    App.ui.showAlert("Matrícula do operador não encontrada. Verifique o cadastro.", "error");
-                    return;
-                }
-                const fields = { canaInteira: parseFloat(perda.canaInteira.value) || 0, tolete: parseFloat(perda.tolete.value) || 0, toco: parseFloat(perda.toco.value) || 0, ponta: parseFloat(perda.ponta.value) || 0, estilhaco: parseFloat(perda.estilhaco.value) || 0, pedaco: parseFloat(perda.pedaco.value) || 0 };
-                const total = Object.values(fields).reduce((s, v) => s + v, 0);
-                const newEntry = { 
-                    ...fields, 
-                    data: perda.data.value, 
-                    codigo: perda.codigo.value.trim(), 
-                    fazenda: farm ? farm.name : 'Desconhecida', 
-                    frenteServico: perda.frente.value.trim(), 
-                    turno: perda.turno.value, 
-                    talhao: perda.talhao.value.trim(), 
-                    frota: perda.frota.value.trim(),
-                    matricula: operator.matricula,
-                    operador: operator.name,
-                    total, 
-                    media: (total / 6).toFixed(2).replace('.', ','), 
-                    usuario: App.state.currentUser.username 
-                };
-                App.state.perdas.push(newEntry); App.data.savePerdas(); App.ui.showAlert('Lançamento de perda guardado com sucesso!');
-                ['dataPerda','codigoPerda','frenteServico','talhaoPerda', 'frotaEquipamento', 'matriculaOperador', 'canaInteira', 'tolete', 'toco', 'ponta', 'estilhaco', 'pedaco'].forEach(id => document.getElementById(id).value = '');
-                perda.fazendaNome.textContent = ''; perda.resultado.textContent = ''; perda.varietyDisplay.textContent = ''; perda.operadorNome.textContent = '';
-                App.charts.renderAll();
-                this.verificarEAtualizarPlano('perda', newEntry.codigo, newEntry.talhao);
+                
+                App.ui.showConfirmationModal('Tem a certeza que deseja guardar este lançamento de perda?', () => {
+                    const { perda } = App.elements;
+                    const farm = App.state.fazendas.find(f => f.code === perda.codigo.value.trim());
+                    const operator = App.state.personnel.find(p => p.matricula === perda.matricula.value.trim());
+                    if (!operator) {
+                        App.ui.showAlert("Matrícula do operador não encontrada. Verifique o cadastro.", "error");
+                        return;
+                    }
+                    const fields = { canaInteira: parseFloat(perda.canaInteira.value) || 0, tolete: parseFloat(perda.tolete.value) || 0, toco: parseFloat(perda.toco.value) || 0, ponta: parseFloat(perda.ponta.value) || 0, estilhaco: parseFloat(perda.estilhaco.value) || 0, pedaco: parseFloat(perda.pedaco.value) || 0 };
+                    const total = Object.values(fields).reduce((s, v) => s + v, 0);
+                    const newEntry = { 
+                        ...fields, 
+                        data: perda.data.value, 
+                        codigo: perda.codigo.value.trim(), 
+                        fazenda: farm ? farm.name : 'Desconhecida', 
+                        frenteServico: perda.frente.value.trim(), 
+                        turno: perda.turno.value, 
+                        talhao: perda.talhao.value.trim(), 
+                        frota: perda.frota.value.trim(),
+                        matricula: operator.matricula,
+                        operador: operator.name,
+                        total, 
+                        media: (total / 6).toFixed(2).replace('.', ','), 
+                        usuario: App.state.currentUser.username 
+                    };
+                    App.state.perdas.push(newEntry); App.data.savePerdas(); App.ui.showAlert('Lançamento de perda guardado com sucesso!');
+                    App.ui.clearForm(perda.form);
+                    App.charts.renderAll();
+                    this.verificarEAtualizarPlano('perda', newEntry.codigo, newEntry.talhao);
+                });
             },
             deleteEntry(type, index) {
                 if (confirm('Tem a certeza que deseja excluir este registo?')) {
@@ -2433,12 +2582,32 @@
                 if(filters.fim) data = data.filter(d => d.data <= filters.fim);
                 return data;
             },
-            _generatePDF(title, headers, bodyData, options = {}) {
-                const { jsPDF } = window.jspdf; 
-                const doc = new jsPDF({ orientation: 'landscape', ...options }); 
-                doc.setFontSize(18); 
-                doc.text(title, doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
-                doc.autoTable({ head: headers, body: bodyData, startY: 25, headStyles: { fillColor: [46, 125, 50] }, ...options.autoTableOptions });
+            _createPdfWithHeaderFooter(doc, title) {
+                const pageCount = doc.internal.getNumberOfPages();
+                const logo = App.state.companyLogo;
+
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    // HEADER
+                    if (logo) {
+                        try { doc.addImage(logo, 'PNG', 14, 8, 30, 15); } catch(e) { console.error("Erro ao adicionar logo:", e); }
+                    }
+                    doc.setFontSize(16);
+                    doc.setFont(undefined, 'bold');
+                    doc.text(title, doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
+                    doc.setFontSize(8);
+                    doc.setFont(undefined, 'normal');
+                    doc.text(new Date().toLocaleString('pt-BR'), doc.internal.pageSize.getWidth() - 14, 15, { align: 'right' });
+                    doc.setDrawColor(224, 224, 224); // Lighter gray
+                    doc.line(14, 22, doc.internal.pageSize.getWidth() - 14, 22);
+
+                    // FOOTER
+                    doc.setDrawColor(224, 224, 224);
+                    doc.line(14, doc.internal.pageSize.getHeight() - 15, doc.internal.pageSize.getWidth() - 14, doc.internal.pageSize.getHeight() - 15);
+                    doc.setFontSize(8);
+                    doc.text(`Página ${i} de ${pageCount}`, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+                }
+
                 doc.save(`${title.toLowerCase().replace(/\s/g, '_')}.pdf`); 
                 App.ui.showAlert('Relatório PDF gerado com sucesso!');
             },
@@ -2461,18 +2630,16 @@
                     return;
                 }
                 const data = this._getFilteredData(App.state.registros, App.elements.broca);
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'landscape' });
+                const title = tipoRelatorio.value === 'A' ? 'Relatório Geral de Brocamento' : 'Relatório de Brocamento por Fazenda';
                 const headers = [['Data', 'Talhão', 'Corte', 'Entrenós', 'Brocado', 'Brocamento (%)']];
                 
-                if (tipoRelatorio.value === 'A') { // Modelo Geral
+                if (tipoRelatorio.value === 'A') {
                     const body = data.map(r => [r.data, r.talhao, r.corte, r.entrenos, r.brocado, r.brocamento]);
-                    this._generatePDF('Relatório Geral de Brocamento', headers, body);
-                } else { // Modelo B - Por Fazenda
-                    const { jsPDF } = window.jspdf;
-                    const doc = new jsPDF({ orientation: 'landscape' });
-                    doc.setFontSize(18);
-                    doc.text('Relatório de Brocamento por Fazenda', doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
+                    doc.autoTable({ head: headers, body: body, startY: 25, headStyles: { fillColor: [46, 125, 50], textColor: 255 }, alternateRowStyles: { fillColor: [245, 245, 245] } });
+                } else {
                     let finalY = 25;
-                    
                     const groupedData = data.reduce((acc, reg) => {
                         const key = `${reg.codigo} - ${reg.fazenda}`;
                         if (!acc[key]) acc[key] = [];
@@ -2492,28 +2659,27 @@
                         grandTotalEntrenos += subTotalEntrenos;
                         grandTotalBrocado += subTotalBrocado;
 
+                        if (finalY > 180) { doc.addPage(); finalY = 25; }
                         doc.setFontSize(12);
+                        doc.setFont(undefined, 'bold');
                         doc.text(fazendaKey, 14, finalY);
                         
                         doc.autoTable({
-                            head: headers,
-                            body: body,
-                            startY: finalY + 2,
-                            headStyles: { fillColor: [46, 125, 50] },
+                            head: headers, body: body, startY: finalY + 2,
+                            headStyles: { fillColor: [46, 125, 50], textColor: 255 },
                             foot: [['Subtotal', '', '', subTotalEntrenos, subTotalBrocado, '']],
                             footStyles: { fillColor: [230, 230, 230], textColor: 0, fontStyle: 'bold' },
-                            didDrawPage: (data) => { finalY = data.cursor.y + 15; }
+                            alternateRowStyles: { fillColor: [245, 245, 245] }
                         });
-                        finalY = doc.lastAutoTable.finalY + 15;
+                        finalY = doc.lastAutoTable.finalY + 10;
                     });
-
+                    
+                    if (finalY > 190) { doc.addPage(); finalY = 25; }
                     doc.setFontSize(12);
                     doc.setFont(undefined, 'bold');
                     doc.text(`Total Geral: Entrenós: ${grandTotalEntrenos} | Brocado: ${grandTotalBrocado}`, 14, finalY);
-
-                    doc.save('relatorio_brocamento_por_fazenda.pdf');
-                    App.ui.showAlert('Relatório PDF gerado com sucesso!');
                 }
+                this._createPdfWithHeaderFooter(doc, title);
             },
             generateBrocamentoCSV() {
                  const { filtroInicio, filtroFim, tipoRelatorio } = App.elements.broca;
@@ -2563,23 +2729,33 @@
                 }
                 const data = this._getFilteredData(App.state.perdas, App.elements.perda); 
                 const isDetailed = App.elements.perda.tipoRelatorio.value === 'B';
-                const finalTitle = isDetailed ? 'Relatorio_Perda_Detalhado' : 'Relatorio_Perda_Resumido';
+                const finalTitle = isDetailed ? 'Relatório de Perda Detalhado' : 'Relatório de Perda Resumido';
                 
-                let headers, body, autoTableOptions = {};
+                let headers, body;
+                const doc = new jsPDF({ orientation: 'landscape' });
+                const formatDate = (dateStr) => new Date(dateStr + 'T03:00:00Z').toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
 
                 if (isDetailed) {
-                    headers = [['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Operador', 'Frota', 'C.Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total']];
-                    body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.operador, p.frota, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total]);
+                    headers = [['Mês', 'Fazenda', 'Talhão', 'Frente', 'Turno', 'Operador', 'Frota', 'C.Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total']];
+                    body = data.map(p => [formatDate(p.data), `${p.codigo} - ${p.fazenda}`, p.talhao, p.frenteServico, p.turno, p.operador, p.frota, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total]);
                 } else {
-                    headers = [['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Matrícula', 'Frota', 'Total']];
-                    body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.matricula, p.frota, p.total]);
-                    const grandTotal = data.reduce((sum, p) => sum + p.total, 0);
-                    autoTableOptions = {
-                        foot: [['Total Geral', '', '', '', '', '', '', grandTotal.toFixed(2)]],
-                        footStyles: { fillColor: [230, 230, 230], textColor: 0, fontStyle: 'bold' },
-                    }
+                    headers = [['Mês', 'Fazenda', 'Talhão', 'Frente', 'Turno', 'Matrícula', 'Frota', 'Total']];
+                    body = data.map(p => [formatDate(p.data), `${p.codigo} - ${p.fazenda}`, p.talhao, p.frenteServico, p.turno, p.matricula, p.frota, p.total]);
                 }
-                this._generatePDF(finalTitle, headers, body, { autoTableOptions });
+                
+                const grandTotal = data.reduce((sum, p) => sum + p.total, 0);
+                const foot = isDetailed ? [['', '', '', '', '', '', '', '', '', '', '', '', 'Total Geral', grandTotal.toFixed(2)]] : [['', '', '', '', '', '', 'Total Geral', grandTotal.toFixed(2)]];
+
+                doc.autoTable({ 
+                    head: headers, 
+                    body: body, 
+                    foot: foot,
+                    startY: 25, 
+                    headStyles: { fillColor: [46, 125, 50], textColor: 255 },
+                    footStyles: { fillColor: [230, 230, 230], textColor: 0, fontStyle: 'bold' },
+                    alternateRowStyles: { fillColor: [245, 245, 245] }
+                });
+                this._createPdfWithHeaderFooter(doc, finalTitle);
             },
             generatePerdaCSV() {
                 const { filtroInicio, filtroFim } = App.elements.perda;
@@ -2589,26 +2765,31 @@
                 }
                 const data = this._getFilteredData(App.state.perdas, App.elements.perda);
                 const isDetailed = App.elements.perda.tipoRelatorio.value === 'B';
+                const formatDate = (dateStr) => new Date(dateStr + 'T03:00:00Z').toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
                 
                 let headers, body;
 
                 if(isDetailed) {
-                    headers = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Operador', 'Frota', 'Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média'];
-                    body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.operador, p.frota, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media]);
+                    headers = ['Mês', 'Fazenda', 'Talhão', 'Frente', 'Turno', 'Operador', 'Frota', 'Cana Inteira', 'Tolete', 'Toco', 'Ponta', 'Estilhaço', 'Pedaço', 'Total', 'Média'];
+                    body = data.map(p => [formatDate(p.data), `${p.codigo} - ${p.fazenda}`, p.talhao, p.frenteServico, p.turno, p.operador, p.frota, p.canaInteira, p.tolete, p.toco, p.ponta, p.estilhaco, p.pedaco, p.total, p.media]);
                 } else {
-                    headers = ['Fazenda', 'Talhão', 'Data', 'Frente', 'Turno', 'Matrícula', 'Frota', 'Total'];
-                    body = data.map(p => [`${p.codigo} - ${p.fazenda}`, p.talhao, p.data, p.frenteServico, p.turno, p.matricula, p.frota, p.total]);
-                    const grandTotal = data.reduce((sum, p) => sum + p.total, 0);
-                    body.push([]);
-                    body.push(['', '', '', '', '', '', 'Total Geral', grandTotal.toFixed(2)]);
+                    headers = ['Mês', 'Fazenda', 'Talhão', 'Frente', 'Turno', 'Matrícula', 'Frota', 'Total'];
+                    body = data.map(p => [formatDate(p.data), `${p.codigo} - ${p.fazenda}`, p.talhao, p.frenteServico, p.turno, p.matricula, p.frota, p.total]);
                 }
+                
+                const grandTotal = data.reduce((sum, p) => sum + p.total, 0);
+                body.push([]);
+                const totalRow = new Array(headers.length).fill('');
+                totalRow[headers.length - (isDetailed ? 2 : 1)] = 'Total Geral';
+                totalRow[headers.length - (isDetailed ? 1 : 0)] = grandTotal.toFixed(2);
+                body.push(totalRow);
                 
                 this._generateCSV('relatorio_perda.csv', headers, body);
             },
             generateHarvestPlanPDF(planId = null) {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF({ orientation: 'landscape' });
-                let finalY = 15;
+                let finalY = 25;
                 let grandTotalArea = 0;
                 let grandTotalProducao = 0;
                 let finalEndDate = null;
@@ -2623,12 +2804,13 @@
                 }
 
                 const reportTitle = planId ? `Relatório do Plano: ${plansToReport[0].frontName}` : "Relatório Geral de Planeamento de Colheita";
-                doc.setFontSize(18);
-                doc.text(reportTitle, doc.internal.pageSize.getWidth() / 2, finalY, { align: 'center' });
-                finalY += 15;
-
-                plansToReport.forEach((plan) => {
+                
+                plansToReport.forEach((plan, planIndex) => {
+                    if (planIndex > 0) doc.addPage();
+                    finalY = 25;
+                    
                     doc.setFontSize(14);
+                    doc.setFont(undefined, 'bold');
                     doc.text(`Frente: ${plan.frontName}`, 14, finalY);
                     finalY += 7;
 
@@ -2662,31 +2844,31 @@
 
                     doc.autoTable({
                         head: head, body: body, startY: finalY,
-                        headStyles: { fillColor: [46, 125, 50] }, styles: { fontSize: 8 },
+                        headStyles: { fillColor: [46, 125, 50], textColor: 255 },
+                        foot: [['Subtotal', '', '', subTotalArea.toFixed(2), subTotalProducao.toFixed(2), '', '', '', '']],
+                        footStyles: { fillColor: [230, 230, 230], textColor: 0, fontStyle: 'bold' },
+                        alternateRowStyles: { fillColor: [245, 245, 245] },
+                        styles: { fontSize: 8 },
                         columnStyles: { 2: { cellWidth: 50 } },
-                        didDrawPage: (data) => { finalY = data.cursor.y + 15; }
                     });
-                    finalY = doc.lastAutoTable.finalY + 5;
-                    
-                    doc.setFontSize(9);
-                    doc.text(`Subtotal - Frente ${plan.frontName}: Área ${subTotalArea.toFixed(2)} ha | Produção ${subTotalProducao.toFixed(2)} ton`, 14, finalY);
-                    finalY += 10;
+                    finalY = doc.lastAutoTable.finalY + 10;
                 });
                 
                 // Grand Total
-                finalY += 5;
+                if (finalY > 190) { doc.addPage(); finalY = 25; }
                 doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
                 doc.text(`Resumo Geral da Safra:`, 14, finalY);
                 finalY += 7;
                 doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
                 doc.text(`- Produção Total Estimada: ${grandTotalProducao.toFixed(2)} ton`, 14, finalY);
                 finalY += 5;
                 doc.text(`- Área Total: ${grandTotalArea.toFixed(2)} ha`, 14, finalY);
                 finalY += 5;
                 doc.text(`- Previsão de Término da Safra: ${new Date(finalEndDate.getTime() - (24*60*60*1000)).toLocaleDateString('pt-BR')}`, 14, finalY);
 
-                doc.save(`${reportTitle.toLowerCase().replace(/\s/g, '_')}.pdf`);
-                App.ui.showAlert('Relatório PDF gerado com sucesso!');
+                this._createPdfWithHeaderFooter(doc, reportTitle);
             },
             generateHarvestPlanCSV(planId = null) {
                 const plansToReport = planId
