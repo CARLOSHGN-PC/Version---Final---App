@@ -786,8 +786,19 @@
 
         <section id="cadastrarPessoas" class="tab-content card" aria-label="Cadastrar Pessoas" tabindex="0" hidden>
             <h2><i class="fas fa-id-card"></i> Cadastro de Pessoas</h2>
-            <div class="card" style="border-left-color: var(--color-info);">
-                <h3><i class="fas fa-user-plus"></i> Adicionar/Editar Pessoa</h3>
+            <div class="card" style="border-left-color: var(--color-purple);">
+                <h3><i class="fas fa-upload"></i> Importar Pessoas via CSV</h3>
+                <p>Faça o upload de um ficheiro CSV com matrículas e nomes. O sistema irá <strong>atualizar</strong> os nomes existentes e <strong>adicionar</strong> novos, sem criar duplicatas.</p>
+                <div class="upload-area" id="personnelCsvUploadArea">
+                    <i class="fas fa-file-csv fa-2x" style="color: var(--color-info);"></i>
+                    <p>Clique ou arraste um ficheiro CSV aqui</p>
+                </div>
+                <input type="file" id="personnelCsvInput" accept=".csv" style="display: none;">
+                <button id="btnDownloadPersonnelCsvTemplate" class="save" style="max-width: 300px; margin-top: 15px; background: var(--color-info);"><i class="fas fa-download"></i> Baixar Modelo CSV</button>
+                <small>Formato esperado: Matricula;Nome</small> 
+            </div>
+            <div class="card" style="border-left-color: var(--color-info); margin-top: 30px;">
+                <h3><i class="fas fa-user-plus"></i> Adicionar/Editar Pessoa (Manual)</h3>
                 <input type="hidden" id="personnelId">
                 <div class="form-row">
                     <div class="form-col"><label for="personnelMatricula" class="required">Matrícula:</label><input type="number" id="personnelMatricula" placeholder="Ex: 102030"></div>
@@ -1030,6 +1041,9 @@
                 name: document.getElementById('personnelName'),
                 btnSave: document.getElementById('btnSavePersonnel'),
                 list: document.getElementById('personnelList'),
+                csvUploadArea: document.getElementById('personnelCsvUploadArea'),
+                csvFileInput: document.getElementById('personnelCsvInput'),
+                btnDownloadCsvTemplate: document.getElementById('btnDownloadPersonnelCsvTemplate'),
             },
             cadastros: {
                 farmCode: document.getElementById('farmCode'),
@@ -1864,6 +1878,9 @@
                     if (action === 'edit-personnel') App.actions.editPersonnel(id);
                     if (action === 'delete-personnel') App.actions.deletePersonnel(id);
                 });
+                App.elements.personnel.csvUploadArea.addEventListener('click', () => App.elements.personnel.csvFileInput.click());
+                App.elements.personnel.csvFileInput.addEventListener('change', (e) => App.actions.importPersonnelFromCSV(e.target.files[0]));
+                App.elements.personnel.btnDownloadCsvTemplate.addEventListener('click', () => App.actions.downloadPersonnelCsvTemplate());
                 
                 // Company Config Listeners
                 App.elements.companyConfig.logoUploadArea.addEventListener('click', () => App.elements.companyConfig.logoInput.click());
@@ -2586,6 +2603,62 @@
                 const link = document.createElement("a");
                 link.setAttribute("href", url);
                 link.setAttribute("download", "modelo_cadastro_fazendas.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+             importPersonnelFromCSV(file) {
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const csv = event.target.result;
+                        const lines = csv.split(/\r\n|\n/).filter(line => line.trim() !== '');
+                        if (lines.length < 2) { App.ui.showAlert('O ficheiro CSV está vazio ou contém apenas o cabeçalho.', 'error'); return; }
+                        const fileHeaders = lines[0].split(';').map(h => h.trim().toUpperCase());
+                        const headerIndexes = { matricula: fileHeaders.indexOf('MATRICULA'), name: fileHeaders.indexOf('NOME') };
+
+                        if (headerIndexes.matricula === -1 || headerIndexes.name === -1) {
+                            App.ui.showAlert('Cabeçalhos "Matricula" e "Nome" não encontrados.', 'error'); return;
+                        }
+
+                        let updatedCount = 0; let newCount = 0;
+                        for (let i = 1; i < lines.length; i++) {
+                            const data = lines[i].split(';');
+                            if (data.length < 2) continue;
+                            const matricula = data[headerIndexes.matricula]?.trim();
+                            const name = data[headerIndexes.name]?.trim();
+                            if (!matricula || !name) continue;
+
+                            let person = App.state.personnel.find(p => p.matricula === matricula);
+                            if (person) {
+                                person.name = name;
+                                updatedCount++;
+                            } else {
+                                App.state.personnel.push({ id: Date.now() + i, matricula, name });
+                                newCount++;
+                            }
+                        }
+                        App.data.savePersonnel();
+                        App.ui.renderPersonnelList();
+                        App.ui.populateOperatorSelects();
+                        App.ui.showAlert(`${newCount} pessoas adicionadas e ${updatedCount} atualizadas.`, 'success');
+                    } catch (e) {
+                        App.ui.showAlert('Erro ao processar o ficheiro CSV.', 'error');
+                        console.error(e);
+                    }
+                };
+                reader.readAsText(file, 'ISO-8859-1');
+            },
+            downloadPersonnelCsvTemplate() {
+                const headers = "Matricula;Nome";
+                const exampleRow = "12345;José Almeida";
+                const csvContent = "\uFEFF" + headers + "\n" + exampleRow;
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", "modelo_cadastro_pessoas.csv");
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
