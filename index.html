@@ -172,7 +172,7 @@
     #harvestPlanTable tbody tr:active { cursor: grabbing; background: var(--color-primary-light); }
     #harvestPlanTable .talhao-list-cell { font-size: 12px; max-width: 150px; word-wrap: break-word; }
     .harvest-summary { margin-top: 20px; padding: 15px; background: var(--color-bg); border-radius: var(--border-radius); border-top: 3px solid var(--color-primary); }
-    .harvest-summary p { margin: 5px 0; font-weight: 500; }
+    .harvest-summary p { margin: 5px 0; font-weight: 500; font-size: 1em; }
     .harvest-summary span { font-weight: 600; color: var(--color-primary-dark); }
     .talhao-selection-list { max-height: 400px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: var(--border-radius); padding: 10px; margin-top: 10px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; background-color: var(--color-bg); }
     .talhao-selection-item { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; grid-template-areas: "check name" "check details"; gap: 4px 12px; padding: 12px; border-radius: var(--border-radius); background-color: var(--color-surface); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm); transition: var(--transition); cursor: pointer; }
@@ -211,42 +211,6 @@
         .card { padding: 16px; }
         .card-header-actions { flex-direction: column; align-items: stretch; }
         .card-header-actions .button-group { justify-content: center; }
-
-        .table-responsive { overflow-x: auto; }
-        #harvestPlanTable, #personnelTable {
-            border: 0;
-        }
-        #harvestPlanTable thead, #personnelTable thead {
-            display: none;
-        }
-        #harvestPlanTable tr, #personnelTable tr {
-            display: block;
-            margin-bottom: 15px;
-            border: 1px solid var(--color-border);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-sm);
-        }
-        #harvestPlanTable td, #personnelTable td {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-align: right;
-            padding: 10px;
-            border-bottom: 1px solid var(--color-border);
-        }
-        #harvestPlanTable td:last-child, #personnelTable td:last-child {
-            border-bottom: 0;
-        }
-        #harvestPlanTable td::before, #personnelTable td::before {
-            content: attr(data-label);
-            font-weight: 600;
-            text-align: left;
-            margin-right: 10px;
-            color: var(--color-primary-dark);
-        }
-        #harvestPlanTable td[data-label="Ação"], #personnelTable td[data-label="Ações"] {
-            justify-content: flex-end;
-        }
     }
     </style>
 </head>
