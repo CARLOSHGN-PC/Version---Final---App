@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Inspeção e Planejamento de Cana com IA</title>
+    <title>AgroVetor - Inspeção e Planejamento</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2e7d32">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -118,16 +123,16 @@
     #alertContainer.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
     
     #user-menu-container { position: relative; z-index: 1200; }
-    #user-menu-toggle { background: rgba(255, 255, 255, 0.1); color: var(--color-white); padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; transition: var(--transition); }
+    #user-menu-toggle { background: rgba(255, 255, 255, 0.1); color: var(--color-white); padding: 8px; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; transition: var(--transition); }
     #user-menu-toggle:hover, #user-menu-toggle.open { background: rgba(255, 255, 255, 0.2); }
-    #user-menu-toggle .fa-user-circle { font-size: 20px; }
+    #user-menu-toggle .fa-user-circle { font-size: 24px; }
     #user-menu-dropdown { position: absolute; top: calc(100% + 12px); right: 0; background: var(--color-surface); color: var(--color-text); border-radius: var(--border-radius); box-shadow: var(--shadow-lg); width: 240px; overflow: hidden; transition: opacity 0.2s ease, transform 0.2s ease; transform-origin: top right; opacity: 0; transform: scale(0.95) translateY(-10px); pointer-events: none; display: block; padding: 8px; }
     #user-menu-dropdown.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .user-menu-header { padding: 16px; background-color: var(--color-bg); margin: -8px -8px 8px -8px; border-radius: var(--border-radius) var(--border-radius) 0 0; }
     .user-menu-header p { margin: 0; line-height: 1.3; }
     .user-menu-header p strong { font-size: 12px; color: var(--color-text-light); }
     #userMenuUsername { font-weight: 600; color: var(--color-primary-dark); font-size: 16px; word-break: break-all; }
-    .user-menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; font-size: 14px; color: var(--color-text-light); cursor: pointer; transition: background-color 0.2s ease; border-radius: var(--border-radius); }
+    .user-menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; font-size: 14px; color: var(--color-text-light); cursor: pointer; transition: background-color 0.2s ease; border-radius: var(--border-radius); background-color: transparent; }
     .user-menu-item.is-action:hover { background-color: var(--color-bg); }
     #logoutBtn { color: var(--color-danger); font-weight: 500; }
     #logoutBtn:hover { background-color: color-mix(in srgb, var(--color-danger) 10%, transparent); }
@@ -363,10 +368,10 @@
                         <label>Talhões Disponíveis:</label>
                         <div id="harvestTalhaoSelectionList" class="talhao-selection-list"></div>
                     </div>
-                    <div class="form-row">
-                        <button class="save" id="btnAddOrUpdateHarvestSequence"><i class="fas fa-plus"></i> Adicionar à Sequência</button>
-                        <button id="btnCancelEditSequence" class="btn-secondary" style="display: none;"><i class="fas fa-times"></i> Cancelar Edição</button>
-                        <button id="btnOptimizeHarvest" class="btn-ai">✨ Otimizar Sequência com IA</button>
+                    <div class="form-row" style="align-items: center;">
+                        <div class="form-col"><button class="save" id="btnAddOrUpdateHarvestSequence"><i class="fas fa-plus"></i> Adicionar à Sequência</button></div>
+                        <div class="form-col"><button id="btnOptimizeHarvest" class="btn-ai">✨ Otimizar Sequência com IA</button></div>
+                        <div class="form-col"><button id="btnCancelEditSequence" class="btn-secondary" style="display: none;"><i class="fas fa-times"></i> Cancelar Edição</button></div>
                     </div>
                 </div>
 
@@ -452,9 +457,9 @@
                 </div>
             </div>
                 <div class="form-row">
-                <div class="form-col"><label for="brocaBase" class="required">Brocado Base:</label><input type="number" id="brocaBase" min="0" value="0" required /></div>
-                <div class="form-col"><label for="brocaMeio" class="required">Brocado Meio:</label><input type="number" id="brocaMeio" min="0" value="0" required /></div>
-                <div class="form-col"><label for="brocaTopo" class="required">Brocado Topo:</label><input type="number" id="brocaTopo" min="0" value="0" required /></div>
+                <div class="form-col"><label for="brocaBase" class="required">Brocado Base:</label><input type="number" id="brocaBase" min="0" placeholder="0" /></div>
+                <div class="form-col"><label for="brocaMeio" class="required">Brocado Meio:</label><input type="number" id="brocaMeio" min="0" placeholder="0" /></div>
+                <div class="form-col"><label for="brocaTopo" class="required">Brocado Topo:</label><input type="number" id="brocaTopo" min="0" placeholder="0" /></div>
             </div>
             <div class="form-row">
                 <div class="form-col">
@@ -603,7 +608,7 @@
                 <select id="farmSelect"></select>
                 <div id="talhaoManagementContainer" style="display:none;">
                     <h4>Talhões da Fazenda <span id="selectedFarmName"></span></h4>
-                    <div id="talhaoList"></div>
+                    <div id="talhaoList" class="table-responsive"></div>
                     <h5 style="margin-top:20px;">Adicionar/Editar Talhão</h5>
                     <input type="hidden" id="talhaoId">
                     <div class="form-row">
@@ -674,7 +679,7 @@
                 <button id="btnSavePersonnel" class="save" style="max-width: 250px;"><i class="fas fa-save"></i> Guardar Pessoa</button>
             </div>
                 <h3><i class="fas fa-users"></i> Pessoas Cadastradas</h3>
-            <div id="personnelList" style="margin-top: 15px;"></div>
+            <div id="personnelList" class="table-responsive"></div>
         </section>
         
         <section id="configuracoesEmpresa" class="tab-content card" aria-label="Configurações da Empresa" tabindex="0" hidden>
@@ -1317,7 +1322,7 @@
                     if (input.type === 'checkbox' || input.type === 'radio') {
                         input.checked = false;
                     } else if (input.type === 'number' && (input.id === 'brocaBase' || input.id === 'brocaMeio' || input.id === 'brocaTopo')) {
-                        input.value = '0';
+                        input.value = '';
                     } else {
                         input.value = '';
                     }
@@ -2860,7 +2865,7 @@
                         styles: { fontSize: 7 },
                         columnStyles: { 2: { cellWidth: 35 } }
                     });
-                    this._createPdfWithHeaderFooter(doc, reportTitle);
+                    this._createPdfWithHeaderFooter(doc, title);
                 } else if (format === 'csv') {
                     this._generateCSV(`${plan.frontName.replace(/\s+/g, '_')}.csv`, fullHeaders, body);
                 }
@@ -2998,7 +3003,7 @@
                     alternateRowStyles: { fillColor: [245, 245, 245] },
                     styles: { fontSize: 7 }
                 });
-                this._createPdfWithHeaderFooter(doc, finalTitle);
+                this._createPdfWithHeaderFooter(doc, title);
             },
             generatePerdaCSV() {
                 const { filtroInicio, filtroFim } = App.elements.perda;
@@ -3032,6 +3037,19 @@
         }
     };
     
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(error => {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+        });
+    }
+
     App.init();
 
     });
