@@ -1,5 +1,5 @@
 // Nome do cache
-const CACHE_NAME = 'agrovetor-cache-v2'; // Versão do cache atualizada
+const CACHE_NAME = 'agrovetor-cache-v1';
 
 // Arquivos a serem cacheados
 const urlsToCache = [
@@ -12,7 +12,9 @@ const urlsToCache = [
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js',
   'https://cdn.jsdelivr.net/npm/chart.js',
-  'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js'
+  'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js',
+  'https://placehold.co/192x192/2e7d32/ffffff?text=AV',
+  'https://placehold.co/512x512/2e7d32/ffffff?text=AV'
 ];
 
 // Evento de instalação: abre o cache e adiciona os arquivos principais
